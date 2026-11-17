@@ -80,4 +80,18 @@ Template choice: ⛔ NOT YET RECORDED (NeurIPS / ICML / ICLR / Google Docs all a
 
 ## Software
 
-Python; xgboost, RAPIDS cuML, PyTorch + skorch, tabpfn, scikit-learn. Exact versions ⛔ NOT YET RECORDED.
+Recorded 2026-11-16 (conda env `cogs118a`, CUDA 13.0):
+
+| Package | Version |
+|---|---|
+| Python | 3.11 |
+| RAPIDS cuML | 26.06 (conda, rapidsai channel) |
+| xgboost | 3.2.0 |
+| PyTorch | 2.14.1+cu130 |
+| skorch | 1.4.0 |
+| tabpfn | 10.0.0 (using v2 weights) |
+| scikit-learn | 1.9.1 |
+
+All six models passed a GPU smoke test on 2026-11-16.
+
+⚠️ cuML's random forest `max_depth` default changes from 16 to unlimited in cuML 26.08. Always set `max_depth` explicitly so a library update can't change results.

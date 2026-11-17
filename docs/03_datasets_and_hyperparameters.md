@@ -1,26 +1,26 @@
 # Datasets & Hyperparameter Reference
 **Project:** COGS 118A Classifier Comparison
-**Version:** v0 — proposed, not finalized
-**Last Updated:** 2026-11-04
+**Version:** v1 — datasets locked; Covertype/HIGGS sizes and grids not final
+**Last Updated:** 2026-11-16
 
 ---
 
-## 🔵 STATUS — Proposed lineup; sizes and grids not final
+## 🔵 STATUS — Lineup locked; sizes and grids not final
 
-Dataset choice is proposed but not confirmed. Sizes wait on the timing test. Grids below are starting points from the paper / discussion, not final.
+Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). Covertype and HIGGS sizes wait on the timing test. Grids below are starting points from the paper / discussion, not final.
 
 ---
 
-## Datasets (proposed)
+## Datasets (locked 2026-11-16)
 
-| Dataset | Source | Positive class rule | Full size | Planned size |
-|---------|--------|---------------------|-----------|--------------|
-| Adult | UCI | Income >50K (binary already) | ~48k rows (to verify) | Whole dataset |
-| Letter | UCI | Paper option p1: "O" vs. rest (very imbalanced) / p2: A–M vs. N–Z (balanced) — pick one | ~20k rows (to verify) | Whole dataset |
-| Covertype | UCI | Largest class = positive, rest negative (paper's rule) | ~581k rows (to verify) | ~100k up to full — pending timing test |
-| HIGGS | UCI | Signal vs. background (binary already) | ~11M rows (to verify) | ~500k–1M — pending timing test |
+| Dataset | Source | Positive class rule | Rows used | Features | % positive | Planned size |
+|---------|--------|---------------------|-----------|----------|------------|--------------|
+| Adult | UCI (`adult.data` + `adult.test` combined, 48,842 raw) | Income >50K | 45,222 (rows with missing values dropped) | 104 (after one-hot) | 24.8% | Whole dataset |
+| Letter | UCI | A–M = 0, N–Z = 1 (paper's LETTER.p2, balanced) | 20,000 | 16 | 50.3% | Whole dataset |
+| Covertype | UCI | Largest class (class 2, Lodgepole Pine) = 1, rest = 0 (paper's rule) | 581,012 (full) | 54 | 48.8% | Full for now; may drop to ~100k–250k after timing test |
+| HIGGS | UCI (11M raw) | Signal = 1, background = 0 | 1,000,000 (random subsample) | 28 | 53.0% | 1M for now; may drop to ~500k after timing test |
 
-> **Note:** Full sizes are approximate figures from discussion, not yet checked against the UCI pages.
+> **Note:** Row counts are from `data/processed/dataset_summary.json`, produced by `src/prepare_data.py` on the server 2026-11-16. Change sizes in `src/config.py` (`N_ROWS`) and re-run the script.
 
 The Adult, Covertype and Letter binarization rules come from the paper (§2.5).
 
@@ -30,12 +30,12 @@ Applied to the training split only, by random subsample. Test set is never cappe
 
 | Model | Cap | Why |
 |-------|-----|-----|
-| SVM (RBF) | ~20k–50k rows on large datasets (exact ⛔ NOT YET RECORDED) | Training cost grows much faster than linear with rows |
-| TabPFN | Depends on version: ~10k rows for v2 (exact ⛔ NOT YET RECORDED) | Model's built-in size limit |
+| SVM (RBF) | 50k rows, **provisional** (`TRAIN_CAP` in `config.py`); final value after timing test | Training cost grows much faster than linear with rows |
+| TabPFN | 10k rows (v2 weights, decided 2026-11-16) | Model's built-in size limit |
 
 ### Preprocessing
 
-- One-hot encode categorical features (Adult has them).
+- Adult: drop rows with any missing value (`?`), then one-hot encode categorical features.
 - Standardize features (mean 0, std 1) for SVM, KNN, ANN — fit on training folds only, inside the Pipeline. No scaling for RF, XGBoost (matches paper §2.1).
 
 ---

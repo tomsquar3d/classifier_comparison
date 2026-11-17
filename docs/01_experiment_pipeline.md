@@ -1,14 +1,14 @@
 # Experiment Pipeline
 **Project:** COGS 118A Classifier Comparison
-**Environment:** Python on a private multi-GPU server (specs ⛔ NOT YET RECORDED)
-**Version:** v0 — pipeline designed, no code written
-**Last Updated:** 2026-11-04
+**Environment:** Python 3.11 (conda env `cogs118a`) on yggdrasil — 8× NVIDIA L40S (48 GB each, driver 580.82.07, CUDA 13.0), 64 CPU cores, 503 GB RAM. **Shared:** other users' jobs hold ~29–39 GB per GPU and several GPUs run near 100% (checked 2026-11-16)
+**Version:** v1 — data prep built and run; experiment script and launcher not written
+**Last Updated:** 2026-11-16
 
 ---
 
-## 🔵 STATUS — Designed, not built
+## 🔵 STATUS — Step 1 done; Steps 2–5 designed, not built
 
-Steps below are the agreed plan. No code exists yet. Everything is `[DRAFTED — not yet executed]` until it runs; then relabel 🟢 and record outputs in `02_results.md`.
+Step 1 ran on the server 2026-11-16. Steps 2–5 are the agreed plan. Everything is `[DRAFTED — not yet executed]` until it runs; then relabel 🟢 and record outputs in `02_results.md`.
 
 ---
 
@@ -44,21 +44,24 @@ Job count: 6 classifiers × 4 datasets × 3 partitions × 3 trials = 216.
 | SVM, RBF kernel | cuML `SVC` | GPU |
 | ANN (MLP) | PyTorch via skorch | GPU |
 | KNN | cuML | GPU |
-| TabPFN | tabpfn (version ⛔ NOT YET RECORDED) | GPU |
+| TabPFN | tabpfn 10.0.0, **v2 weights** via `TabPFNClassifier.create_default_for_version(ModelVersion.V2)` (package default is 3.5, which needs a license token) | GPU |
 
 ---
 
-## Step 1: Data prep — 🔵 [NEW — 2026-11-04] [DRAFTED — not yet executed]
+## Step 1: Data prep — 🟢 [NEW — 2026-11-04, run 2026-11-16]
 
 For each dataset: download from UCI → handle missing values → one-hot encode categoricals → binarize labels (rules in `03`) → subsample if large → save processed file + a summary row (rows, features, % positive) for the report's dataset table.
 
-Code: ⛔ NOT YET RECORDED (not written).
+Also pre-computes all 9 train/test splits (3 partitions × 3 trials, stratified, seeds from `config.split_seed`) and stores them in the same file, so every classifier sees identical rows. Step 2's "split with the trial seed" now means "load the stored split".
+
+Code: `src/prepare_data.py` (settings in `src/config.py`). Run: `python src/prepare_data.py`.
+Output: `data/processed/<dataset>.npz` + `data/processed/dataset_summary.json`. Row counts in `03`.
 
 ## Step 2: Per-job experiment script — 🔵 [NEW — 2026-11-04] [DRAFTED — not yet executed]
 
 Inputs: dataset, classifier, partition (0.2 / 0.5 / 0.8 train share), trial seed.
 
-1. Stratified train/test split with the trial seed.
+1. Load the stored train/test indices for this partition and trial (from Step 1).
 2. Apply any per-model training cap (SVM, TabPFN — see `03`) by random subsample of the training split only. Test set stays the same for every model.
 3. Pipeline: scaler + model for SVM, KNN, ANN. No scaling for RF, XGBoost. TabPFN handles its own preprocessing.
 4. `GridSearchCV(cv=5, scoring="accuracy", return_train_score=True, n_jobs=1)` on the training split. TabPFN: no search.
@@ -72,6 +75,8 @@ Code: ⛔ NOT YET RECORDED (not written).
 ## Step 3: Launcher — 🔵 [NEW — 2026-11-04] [DRAFTED — not yet executed]
 
 Builds the 216-job list, skips jobs whose results file already exists (so restarts resume), assigns each job a GPU via `CUDA_VISIBLE_DEVICES`, runs several at once.
+
+⚠️ GPUs are shared with other users (see header). The launcher must check free memory (`nvidia-smi`) before placing a job instead of assuming an empty GPU, and compute times will be noisier than on a dedicated machine.
 
 Code: ⛔ NOT YET RECORDED (not written).
 
