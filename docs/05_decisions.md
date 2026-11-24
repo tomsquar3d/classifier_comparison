@@ -1,11 +1,13 @@
 # Data Notes, Decisions & Caveats
 **Project:** COGS 118A Classifier Comparison
-**Version:** v1.1
+**Version:** v2
 **Last Updated:** 2026-11-24
 
 ---
 
-## 🔵 STATUS — 12 decisions logged (2026-11-04 planning, 2026-11-16 setup, 2026-11-24 speed metrics)
+## 🔵 STATUS — 17 decisions logged (2026-11-04 planning, 2026-11-16 setup, 2026-11-24 speed metrics + replan after losing the lab server)
+
+#13–17 were made in a separate 2026-11-24 chat and recorded in the claude.ai project doc `project-design.md`; Tom confirmed syncing them here the same day. #14 partly reverses #6; #13 replaces the launcher part of #11.
 
 Entries are permanent. If a decision is reversed, add a new entry pointing back to the old one.
 
@@ -82,3 +84,33 @@ Entries are permanent. If a decision is reversed, add a new entry pointing back 
 **Decision:** Every job also records tuning time, final fit time, prediction time per 1,000 rows and throughput. Prediction speed is timed on a fixed 10,000-row test sample (median of 5 repeats after a warm-up), and GPU conditions are logged at the start of each job.
 **Rationale (from 2026-11-24 discussion):** Tom asked for a metric of how fast each classifier is. The paper measured none, so it's a novelty point, and the classifiers differ in where their cost falls (KNN/TabPFN at prediction time, trees at training time). A fixed-size timing sample keeps per-row numbers comparable across partitions and avoids re-predicting huge test sets several times.
 **Impact:** A few timer lines in the experiment script (action item #10) and new fields in each results file. Adds a speed table (`02` §6) and accuracy-vs-speed figures (`04`). Timings are only comparable within one GPU type (each job logs its GPU name), and are noisy on shared GPUs (#11), so present them as relative comparisons.
+
+## 13. Lab server lost; move to cloud GPUs (Turing or newer) — 2026-11-24
+
+**Decision:** yggdrasil is no longer available. Run on UCSD DataHub / DSMLP first (access pending — email datahub@ucsd.edu; request a Turing-or-newer GPU type, since the pool also has 1080 Tis), Kaggle as backup (2× T4 16 GB, ~30 GPU-h/week, 12-h sessions, batch "Save version" jobs), Colab free T4 for overflow only. The runner must be resumable: each job writes its own results file and skips itself if the file exists.
+**Rationale (per project doc):** Personal GTX 1080 Ti ruled out — it's a Pascal GPU, and CUDA 13 / RAPIDS 24.02+ need newer cards. Turing+ keeps the existing environment usable. Resumable runner so a cut-off session loses one job, not the sweep. Why yggdrasil became unavailable: not stated.
+**Impact:** Replaces the multi-GPU launcher part of #11. Data prep must be re-run on the new platform. Speed timings only comparable within one GPU type (#12).
+
+## 14. Covertype and HIGGS capped at 100k rows; no large-data pitch — 2026-11-24
+
+**Decision:** Covertype and HIGGS each use one stratified, fixed-seed 100k-row subsample taken before any splits. No full-data side runs.
+**Rationale (per project doc):** Compute cut after losing the lab server. Dropping the large-data novelty pitch keeps every classifier compared on the same data sizes.
+**Impact:** Partly reverses #6 (bigger datasets). Largest training set is 80k rows (80/20), still 20× the paper's 4k. The "dataset size" rubric item now rests on 100k-row datasets rather than 500k–1M.
+
+## 15. SVM training cap 50k → 10k — 2026-11-24
+
+**Decision:** SVM trains on at most 10k rows (stratified subsample of the training split), same as TabPFN.
+**Rationale (per project doc):** Runtime. (TabPFN's 10k cap is a hard model limit; SVM's is a compute choice.)
+**Impact:** SVM and TabPFN are the only models that see different training data. Document both caps in the report.
+
+## 16. Tune on trial 1 only — 2026-11-24
+
+**Decision:** Grid search runs once per dataset × partition × model, on trial 1. Trials 2–3 refit those best settings on their own training split and score on their own test split.
+**Rationale (per project doc):** Part of the compute cuts. The 3 trials then measure split-to-split variation, not tuning variation — say so in the report.
+**Impact:** Validation accuracy is one value per cell (from trial-1 CV). Tuning time (#12) is recorded on trial 1 only. The runner must finish trial 1 before trials 2–3 of the same cell.
+
+## 17. MLP early stopping + small grid; 3-fold CV fallback — 2026-11-24
+
+**Decision:** MLP uses early stopping and a grid of 6–8 combinations. If the timing test shows the sweep is still too slow, drop to 3-fold CV and document it.
+**Rationale (per project doc):** Part of the compute cuts after losing the lab server.
+**Impact:** Exact MLP grid values still to set (action item #15).

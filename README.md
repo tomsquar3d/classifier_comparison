@@ -1,7 +1,7 @@
 # COGS 118A Classifier Comparison — Folder Contents
 **Date created:** 2026-11-04
-**Status:** Data prepared and environment ready (2026-11-16); experiment script next, no results yet
-**Scope:** 6 classifiers × 4 binary datasets (Adult, Letter, Covertype, HIGGS — locked 2026-11-16) × 3 partitions × 3 trials; metrics: accuracy (train/val/test) + speed (tune, fit, predict time — added 2026-11-24)
+**Status:** Plan revised 2026-11-24 after losing the lab server — data prep must be re-run on the new platform; experiment script next, no results yet
+**Scope:** 6 classifiers × 4 binary datasets (Adult, Letter, Covertype, HIGGS — locked 2026-11-16; Covertype and HIGGS capped at 100k rows 2026-11-24) × 3 partitions × 3 trials; metrics: accuracy (train/val/test) + speed (tune, fit, predict time — added 2026-11-24)
 
 ---
 
@@ -11,7 +11,7 @@ Final project for COGS 118A (Fall 2026, Prof. Zhuowen Tu). Solo project. It repl
 
 Basic requirement from the assignment: 3 classifiers from the paper on 3 UCI datasets, binary labels, 20/80, 50/50, 80/20 train/test partitions, 3 trials each, cross-validated hyperparameters, report train/validation/test accuracy plus the chosen hyperparameters. This project goes beyond that for bonus (≥5 classifiers, ≥4 datasets, modern models).
 
-Experiments run on a private multi-GPU server.
+Experiments run on cloud GPUs (UCSD DSMLP first choice, Kaggle backup, Colab overflow). The lab server used for setup is no longer available (2026-11-24).
 
 ---
 

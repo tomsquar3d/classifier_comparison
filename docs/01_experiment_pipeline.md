@@ -1,14 +1,14 @@
 # Experiment Pipeline
 **Project:** COGS 118A Classifier Comparison
-**Environment:** Python 3.11 (conda env `cogs118a`) on yggdrasil — 8× NVIDIA L40S (48 GB each, driver 580.82.07, CUDA 13.0), 64 CPU cores, 503 GB RAM. **Shared:** other users' jobs hold ~29–39 GB per GPU and several GPUs run near 100% (checked 2026-11-16)
-**Version:** v1.1 — data prep built and run; speed timing added to the Step 2 design; experiment script and launcher not written
+**Environment:** Python 3.11 (conda env `cogs118a`, CUDA 13.0). **Platform changed 2026-11-24:** the lab server (yggdrasil, 8× L40S) is no longer available. Now: UCSD DSMLP (first choice, access pending), Kaggle 2× T4 (backup), Colab T4 (overflow). GPUs must be Turing / T4 or newer; the personal GTX 1080 Ti (Pascal) is ruled out
+**Version:** v2 — revised for cloud GPUs; data prep must be re-run on the new platform; experiment script and runner not written
 **Last Updated:** 2026-11-24
 
 ---
 
-## 🔵 STATUS — Step 1 done; Steps 2–5 designed, not built
+## 🔵 STATUS — Step 1 built (needs re-run on new platform); Steps 2–5 designed, not built
 
-Step 1 ran on the server 2026-11-16. Steps 2–5 are the agreed plan. Everything is `[DRAFTED — not yet executed]` until it runs; then relabel 🟢 and record outputs in `02_results.md`.
+Step 1 ran on yggdrasil 2026-11-16, but that server and its `data/` folder are gone. Re-run it on the new platform with the 100k caps (action item #29). Steps 2–5 are the agreed plan, revised 2026-11-24 (`05` #13–17). Everything is `[DRAFTED — not yet executed]` until it runs; then relabel 🟢 and record outputs in `02_results.md`.
 
 ---
 
@@ -26,11 +26,12 @@ Step 1 ran on the server 2026-11-16. Steps 2–5 are the agreed plan. Everything
 ```
 data prep (per dataset) → processed files in data/
         ↓
-timing test (1 dataset, all 6 models, 80/20, 1 trial)
+timing test (HIGGS 100k, all 6 models, 80/20, 1 trial)
         ↓
-launcher → 216 independent jobs, one per GPU at a time
+resumable runner → 216 jobs; skips any job whose results file exists
         ↓
-each job: split → GridSearchCV (5-fold) → refit best → score → write results/<job>.json
+trial 1: GridSearchCV (5-fold) → refit best → score → write results/<job>.json
+trials 2–3: refit trial-1 best settings on own split → score → write
         ↓
 aggregate → mean over 3 trials → tables + figures
 ```
@@ -64,12 +65,15 @@ Inputs: dataset, classifier, partition (0.2 / 0.5 / 0.8 train share), trial seed
 1. Load the stored train/test indices for this partition and trial (from Step 1).
 2. Apply any per-model training cap (SVM, TabPFN — see `03`) by random subsample of the training split only. Test set stays the same for every model.
 3. Pipeline: scaler + model for SVM, KNN, ANN. No scaling for RF, XGBoost. TabPFN handles its own preprocessing.
-4. `GridSearchCV(cv=5, scoring="accuracy", return_train_score=True, n_jobs=1)` on the training split. TabPFN: no search.
-5. Refit best config on the full training split; record train accuracy, mean CV validation accuracy, test accuracy, best params.
-6. Measure speed (🟣 [NEW — 2026-11-24], see below).
-7. Write `results/<dataset>_<clf>_<partition>_trial<k>.json` plus the full `cv_results_` (for heatmaps).
+4. **Trial 1 only** (`config.TUNE_TRIAL`): `GridSearchCV(cv=5, scoring="accuracy", return_train_score=True, n_jobs=1)` on the training split, then save the best params. TabPFN: no search. 🟠 [NEW — 2026-11-24]
+5. **Trials 2–3:** load the trial-1 best params for this dataset × partition × model and fit once on this trial's training split, no search. So trials 2–3 depend on trial 1's results file; the runner must order jobs that way.
+6. Record train accuracy, test accuracy, best params. Validation accuracy comes from the trial-1 CV (one value per dataset × partition × model).
+7. Measure speed (🟣 [NEW — 2026-11-24], see below).
+8. Write `results/<dataset>_<clf>_<partition>_trial<k>.json` plus the full `cv_results_` (for heatmaps).
 
-⚠️ `n_jobs=1` inside each job — parallel folds on one GPU fight for memory. Parallelize across jobs/GPUs instead.
+⚠️ `n_jobs=1` inside each job — parallel folds on one GPU fight for memory.
+
+MLP: early stopping on, grid of 6–8 combos (`03`). Fallback if the timing test says the sweep is too slow: `CV_FOLDS = 3`, documented in the report.
 
 ### Speed measurement — 🟣 [NEW — 2026-11-24] [DRAFTED — not yet executed]
 
@@ -77,7 +81,7 @@ Four numbers per job, all wall-clock seconds from `time.perf_counter()`. Setting
 
 | Field | What it times | How |
 |-------|---------------|-----|
-| `tune_time_s` | Whole grid search: every config × 5 folds, plus the refit | Timer around `GridSearchCV.fit`. TabPFN = 0 (no search) |
+| `tune_time_s` | Whole grid search: every config × 5 folds, plus the refit | Timer around `GridSearchCV.fit`. Trial 1 only (trials 2–3 don't tune). TabPFN = 0 (no search) |
 | `fit_time_s` | Training the final model once on the full training split | `GridSearchCV.refit_time_`. TabPFN: timer around `fit` |
 | `predict_ms_per_1k` | Prediction speed, normalized | Median of `TIMING_REPEATS` timed `predict` calls on a fixed `TIMING_N_ROWS`-row sample of the test split, ÷ rows × 1000 |
 | `predict_rows_per_s` | Same measurement as throughput | rows ÷ median time |
@@ -94,17 +98,19 @@ Accuracy still comes from one full `predict` on the whole test set. The timing s
 
 Code: ⛔ NOT YET RECORDED (not written).
 
-## Step 3: Launcher — 🔵 [NEW — 2026-11-04] [DRAFTED — not yet executed]
+## Step 3: Resumable runner — 🟠 [REVISED — 2026-11-24] [DRAFTED — not yet executed]
 
-Builds the 216-job list, skips jobs whose results file already exists (so restarts resume), assigns each job a GPU via `CUDA_VISIBLE_DEVICES`, runs several at once.
+Builds the 216-job list (4 datasets × 3 partitions × 3 trials × 6 models), runs trial-1 jobs before trials 2–3, and skips any job whose results file already exists. Cloud sessions get cut off (Kaggle: 12-h sessions, ~30 GPU-h/week; Colab limits not guaranteed), so a cut-off loses one job, not the sweep.
 
-⚠️ GPUs are shared with other users (see header). The launcher must check free memory (`nvidia-smi`) before placing a job instead of assuming an empty GPU, and compute times will be noisier than on a dedicated machine. If the sweep's timings turn out too noisy, a separate timing-only pass on the least-busy GPU is the fallback (action item #26).
+Kaggle: run as a batch "Save version" job; with 2× T4, two jobs can run at once, one per GPU (`CUDA_VISIBLE_DEVICES`). Results files must be copied out of each session (e.g. pushed to the repo or saved as a Kaggle dataset) before it ends.
+
+Replaces the 2026-11-04 multi-GPU launcher design (8 shared L40S, free-memory checks), which no longer applies.
 
 Code: ⛔ NOT YET RECORDED (not written).
 
 ## Step 4: Timing test — 🔵 [NEW — 2026-11-04] [DRAFTED — not yet executed]
 
-Run one dataset, all 6 models, 80/20, 1 trial at target size. Multiply by 36 for a total-time estimate. Use the result to finalize dataset sizes and per-model caps. Also a first check that the speed fields (Step 2) come out sensible.
+Run the worst case: HIGGS 100k, all 6 models, 80/20, 1 trial. Multiply each model's time by 36 for a sweep estimate (rough expectation from planning: 5–10 T4 GPU-hours — an estimate to check, not a measurement). Decide from it whether 5-fold CV fits or the 3-fold fallback is needed. Also a first check that the speed fields (Step 2) come out sensible.
 
 Result: ⛔ NOT YET RECORDED.
 

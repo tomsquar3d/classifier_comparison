@@ -5,6 +5,16 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-24 — Session 4
+**Files changed:** `src/config.py`, README.md, `docs/01`–`07`, `docs/project-design.md`
+
+- Synced the repo with the 2026-11-24 replan recorded in the claude.ai project doc `project-design.md` (made in a separate chat; Tom confirmed the sync this session). Logged as `05` #13–17.
+- `src/config.py`: Covertype and HIGGS `N_ROWS` → 100,000; SVM `TRAIN_CAP` 50,000 → 10,000; new `TUNE_TRIAL = 0`; note on the 3-fold CV fallback.
+- `01`: platform now DSMLP / Kaggle / Colab (Turing+); Step 2 tunes on trial 1 only, trials 2–3 refit; Step 3 is now a resumable runner (old multi-GPU launcher design retired); timing test on HIGGS 100k.
+- `02`: Covertype/HIGGS sizes marked as set-in-config but not yet re-run (⛔ until #29); 2026-11-16 sizes kept as superseded.
+- `03`, `04`: new sizes, caps, trial-1 tuning, MLP grid limits; rubric mapping no longer claims large datasets; new open question on trial-1 tuning.
+- `07`: closed #13, #14, #24, #27; added #28–32 (DSMLP access, re-run data prep, rebuild env + CUDA driver check, getting results out of cloud sessions, TA question on trial-1 tuning).
+
 ## 2026-11-24 — Session 3
 **Files changed:** `src/config.py`, README.md, `docs/01`–`07`, `docs/project-design.md`
 

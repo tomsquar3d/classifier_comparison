@@ -18,13 +18,14 @@ RESULTS_DIR = ROOT / "results"
 DATASETS = ["adult", "letter", "covertype", "higgs"]
 
 # Rows kept per dataset after cleaning. None = keep everything.
-# Covertype and HIGGS are PROVISIONAL until the timing test (action items
-# #12-13). Re-run prepare_data.py after changing them.
+# Covertype and HIGGS capped at 100k on 2026-11-24 (decision #14): one
+# stratified, fixed-seed subsample before any splits, so every classifier
+# sees the same rows. Re-run prepare_data.py after changing these.
 N_ROWS = {
     "adult": None,          # ~45k after dropping rows with missing values
     "letter": None,         # 20k
-    "covertype": None,      # full 581k for now; may drop to 100k-250k
-    "higgs": 1_000_000,     # random subsample of the 11M rows; may drop to 500k
+    "covertype": 100_000,   # stratified subsample of 581,012
+    "higgs": 100_000,       # stratified subsample of the HIGGS_RAW_SAMPLE read
 }
 
 # Upper bound on how many HIGGS rows are read from the raw file before
@@ -35,7 +36,12 @@ HIGGS_RAW_SAMPLE = 2_000_000
 # Train fraction for each partition: 20/80, 50/50, 80/20 (train/test).
 PARTITIONS = {"20_80": 0.2, "50_50": 0.5, "80_20": 0.8}
 N_TRIALS = 3
-CV_FOLDS = 5
+CV_FOLDS = 5            # fallback: 3 if the timing test says 5 is too slow
+
+# Tuning happens once per dataset x partition x model, on this trial only
+# (decision #16). Other trials refit the best settings on their own split.
+# Trials are numbered 0-2 in code; 0 is "trial 1" in the docs.
+TUNE_TRIAL = 0
 
 # One seed controls the dataset subsample; split seeds are derived from it
 # so every classifier sees exactly the same train/test rows.
@@ -53,7 +59,7 @@ def split_seed(partition: str, trial: int) -> int:
 TRAIN_CAP = {
     "rf": None,
     "xgboost": None,
-    "svm": 50_000,      # PROVISIONAL (action item #14); RBF SVM scales ~n^2
+    "svm": 10_000,      # decision #15 (was provisional 50k); for runtime
     "ann": None,
     "knn": None,
     "tabpfn": 10_000,   # TabPFN v2 open weights, decided 2026-11-16
