@@ -17,10 +17,11 @@
 | 20 | 2026-11-04 | Write report incl. Bonus Points section + AI-use disclosure | Yes — submission | Due Friday night of finals week (exact date ⛔ NOT YET RECORDED) |
 | 21 | 2026-11-04 | Record exact due date | No | |
 | 28 | 2026-11-24 | Get DSMLP access (email datahub@ucsd.edu); request a Turing-or-newer GPU type | Yes — compute | 05 #13. Kaggle is the backup |
-| 29 | 2026-11-24 | Re-run `prepare_data.py` on the new platform at 100k caps; record Covertype/HIGGS rows + % positive in 02/03 | Yes — all runs | Old `data/` was on yggdrasil |
+| 29 | 2026-11-24 | Re-run `prepare_data.py` on the new platform (100k caps + 50/50 balancing); record final rows for all 4 datasets in 02/03 | Yes — all runs | Old `data/` was on yggdrasil. Check every dataset comes out 50.0% positive |
 | 30 | 2026-11-24 | Rebuild the env on the new platform; check its GPU driver supports CUDA 13 (else use CUDA 12 builds) and re-record versions in 04 | Yes — all runs | Env was built for CUDA 13.0 / driver 580 on yggdrasil; cloud drivers may be older |
 | 31 | 2026-11-24 | Plan how results files get out of each Kaggle/Colab session (push to repo or save as dataset) | Yes — before sweep | 01 Step 3 |
 | 32 | 2026-11-24 | Ask instructor/TA: is tuning on trial 1 and reusing settings for trials 2–3 OK? | No | 04 open question 3 |
+| 33 | 2026-11-24 | Decide whether to mention to TA that datasets are balanced 50/50 (Adult differs from the paper's version) | No | 05 #18 |
 | 25 | 2026-11-24 | Make speed table + accuracy-vs-speed figures | No — bonus | 02 §6, 04 Speed vs. accuracy |
 | 26 | 2026-11-24 | If sweep timings are too noisy or came from mixed GPU types, run a short timing-only pass on one GPU type | No | Decide after the sweep |
 

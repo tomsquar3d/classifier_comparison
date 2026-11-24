@@ -5,6 +5,14 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-24 — Session 5
+**Files changed:** `src/config.py`, `src/prepare_data.py`, README.md, `docs/02`–`07`, `docs/project-design.md`
+
+- All datasets balanced 50/50 by undersampling the larger class, before the 100k cap. Logged as `05` #18. (source: Tom's request this session; rationale not stated)
+- `src/config.py`: new `BALANCE_CLASSES = True`. `src/prepare_data.py`: new `balance()`; summary JSON also records rows and % positive before balancing. Tested on fake data in Claude's workspace (Letter-like 30% → 50%, Covertype-like 40.5% → 50%, all 80/20 test splits 50%). Not yet run on real data.
+- `02`, `03`: pre-balancing numbers relabelled; expected post-balancing sizes added as approximations (Adult ~22.4k, Letter ~19.9k, Covertype/HIGGS 100k). `04`: rubric mapping drops the imbalance angle.
+- `07`: #29 notes updated; added #33 (TA: is balancing OK / note Adult departs from the paper).
+
 ## 2026-11-24 — Session 4
 **Files changed:** `src/config.py`, README.md, `docs/01`–`07`, `docs/project-design.md`
 

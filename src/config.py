@@ -28,6 +28,12 @@ N_ROWS = {
     "higgs": 100_000,       # stratified subsample of the HIGGS_RAW_SAMPLE read
 }
 
+# Balance classes to exactly 50/50 (decision #18, 2026-11-24): randomly drop
+# rows of the larger class until both classes have the same count. Done after
+# cleaning and BEFORE the N_ROWS cap, so capped datasets come out 50/50 too.
+# Adult shrinks most (~25% positive -> about half its rows are dropped).
+BALANCE_CLASSES = True
+
 # Upper bound on how many HIGGS rows are read from the raw file before
 # subsampling (the full file is 11M rows, about 8 GB in memory).
 HIGGS_RAW_SAMPLE = 2_000_000

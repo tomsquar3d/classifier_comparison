@@ -1,30 +1,41 @@
 # Datasets & Hyperparameter Reference
 **Project:** COGS 118A Classifier Comparison
-**Version:** v2 — datasets locked; Covertype/HIGGS capped at 100k; SVM cap 10k; grids not final
+**Version:** v3 — datasets locked and balanced 50/50; Covertype/HIGGS capped at 100k; SVM cap 10k; grids not final
 **Last Updated:** 2026-11-24
 
 ---
 
 ## 🔵 STATUS — Lineup and sizes set; grids not final
 
-Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). Covertype and HIGGS capped at 100k rows and SVM cap set to 10k on 2026-11-24 (`05` #14–15); data prep not yet re-run at those sizes. Grids below are starting points, not final.
+Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). Covertype and HIGGS capped at 100k rows and SVM cap set to 10k on 2026-11-24 (`05` #14–15). All datasets balanced 50/50 (`05` #18, same day). Data prep not yet re-run with either change. Grids below are starting points, not final.
 
 ---
 
 ## Datasets (locked 2026-11-16)
 
-| Dataset | Source | Positive class rule | Rows used | Features | % positive | Planned size |
+| Dataset | Source | Positive class rule | Rows after cleaning (2026-11-16) | Features | % positive (before balancing) | Planned size (balanced 50/50) |
 |---------|--------|---------------------|-----------|----------|------------|--------------|
-| Adult | UCI (`adult.data` + `adult.test` combined, 48,842 raw) | Income >50K | 45,222 (rows with missing values dropped) | 104 (after one-hot) | 24.8% | Whole dataset |
-| Letter | UCI | A–M = 0, N–Z = 1 (paper's LETTER.p2, balanced) | 20,000 | 16 | 50.3% | Whole dataset |
-| Covertype | UCI | Largest class (class 2, Lodgepole Pine) = 1, rest = 0 (paper's rule) | 581,012 full (2026-11-16) | 54 | 48.8% (full) | **100,000**, stratified subsample (2026-11-24) |
-| HIGGS | UCI (11M raw) | Signal = 1, background = 0 | 1,000,000 subsample (2026-11-16) | 28 | 53.0% (1M) | **100,000**, stratified subsample (2026-11-24) |
+| Adult | UCI (`adult.data` + `adult.test` combined, 48,842 raw) | Income >50K | 45,222 (rows with missing values dropped) | 104 (after one-hot) | 24.8% | ~22.4k (all ~11.2k positives + equal number of negatives) |
+| Letter | UCI | A–M = 0, N–Z = 1 (paper's LETTER.p2, balanced) | 20,000 | 16 | 50.3% | ~19.9k |
+| Covertype | UCI | Largest class (class 2, Lodgepole Pine) = 1, rest = 0 (paper's rule) | 581,012 full (2026-11-16) | 54 | 48.8% (full) | **100,000** (50k per class) |
+| HIGGS | UCI (11M raw) | Signal = 1, background = 0 | 1,000,000 subsample (2026-11-16) | 28 | 53.0% (1M) | **100,000** (50k per class) |
 
 > **Note:** Row counts are from `data/processed/dataset_summary.json`, produced by `src/prepare_data.py` on yggdrasil 2026-11-16. Change sizes in `src/config.py` (`N_ROWS`) and re-run the script.
 >
 > **100k subsample (2026-11-24):** taken once per dataset, stratified on the label, fixed seed (`BASE_SEED`), before any splits — so every classifier uses the same 100k rows. HIGGS: the script first reads a random ~2M rows of the 11M file (`HIGGS_RAW_SAMPLE`), then takes the stratified 100k from those. The largest training set is now 80k rows (80/20), still 20× the paper's 4k.
 
 The Adult, Covertype and Letter binarization rules come from the paper (§2.5).
+
+### ⚠️ Class balancing — 🟠 [NEW — 2026-11-24]
+
+Every dataset is made exactly 50/50 by randomly dropping rows of the larger class (fixed seed, `BASE_SEED`), after cleaning and **before** the 100k cap. Then the cap and all splits are stratified, so every train and test split is 50/50 too. Switch: `BALANCE_CLASSES` in `src/config.py`; code: `balance()` in `src/prepare_data.py` (tested on fake data 2026-11-24: 30% → 50% positive, all test splits 50%). `dataset_summary.json` now also records rows and % positive before balancing.
+
+Planned sizes above are approximate (from rounded rates) until the re-run.
+
+Consequences to state in the report:
+- Accuracy's baseline is now 50% on every dataset, so accuracies are comparable across datasets.
+- Adult loses about half its rows, and its 25%-positive real-world mix is gone. The paper used Adult unbalanced, so Adult numbers are less directly comparable to the paper's.
+- Letter, Covertype and HIGGS were already near 50/50, so balancing barely changes them.
 
 ### ⚠️ Per-model training caps
 

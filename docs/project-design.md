@@ -17,10 +17,12 @@ Replication + modernization of Caruana & Niculescu-Mizil (ICML 2006), "An Empiri
 Dropped: AdaBoost (no GPU, overlaps XGBoost), LightGBM (GPU build fiddly), RealMLP/TabM (overkill).
 
 ## Datasets (4, binary) — sizes updated 2026-11-24
-| Dataset | Rows used | Features | % positive | Rule |
+All datasets balanced to **50/50** (added 2026-11-24): the larger class is randomly undersampled (fixed seed) after cleaning and before the 100k cap. % positive below is before balancing.
+
+| Dataset | Rows used | Features | % positive (pre-balancing) | Rule |
 |---|---|---|---|---|
-| Adult | 45,222 | 104 | 24.8% | >50K = 1; missing rows dropped |
-| Letter | 20,000 | 16 | 50.3% | A–M = 0, N–Z = 1 |
+| Adult | ~22.4k after balancing (45,222 before) | 104 | 24.8% | >50K = 1; missing rows dropped |
+| Letter | ~19.9k after balancing (20,000 before) | 16 | 50.3% | A–M = 0, N–Z = 1 |
 | Covertype | **100,000** (stratified subsample of 581,012) | 54 | 48.8% (full data) | Largest class vs rest |
 | HIGGS | **100,000** (stratified subsample) | 28 | 53.0% (1M sample) | Signal vs background |
 
@@ -58,6 +60,7 @@ Dropped: AdaBoost (no GPU, overlaps XGBoost), LightGBM (GPU build fiddly), RealM
 - Optional: calibration (AUC, Brier, reliability diagrams)
 
 ## Change log
+- **2026-11-24 (balancing):** All datasets balanced 50/50 by undersampling (decision #18). Adult shrinks to ~22.4k and no longer matches the paper's unbalanced Adult.
 - **2026-11-24 (sync):** Repo `docs/` and `src/config.py` brought in line with the replan below (decisions #13–17 in `05_decisions.md`; config: Covertype/HIGGS 100k, SVM cap 10k, `TUNE_TRIAL = 0`).
 - **2026-11-24 (speed):** Speed metrics added: tune / fit / predict time + throughput per job, fixed 10k-row timing sample, GPU name logged (decision #12).
 - **2026-11-24:** Lab server lost; moved to DSMLP / Kaggle / Colab (Turing+ GPUs). Covertype and HIGGS capped at 100k rows. Large-data novelty pitch dropped so every classifier is compared on the same data. SVM cap 50k → 10k. Tune on trial 1 only. MLP early stopping + smaller grid. Resumable runner.

@@ -158,6 +158,17 @@ LOADERS = {
 
 
 # ---------------------------------------------------------------- main step
+def balance(X: pd.DataFrame, y: np.ndarray, seed: int):
+    """Undersample the larger class so both classes have the same count.
+    Rows are drawn at random with a fixed seed; original order is kept."""
+    rng = np.random.default_rng(seed)
+    idx0, idx1 = np.flatnonzero(y == 0), np.flatnonzero(y == 1)
+    n = min(len(idx0), len(idx1))
+    keep = np.sort(np.concatenate([rng.choice(idx0, n, replace=False),
+                                   rng.choice(idx1, n, replace=False)]))
+    return X.iloc[keep].reset_index(drop=True), y[keep]
+
+
 def subsample(X: pd.DataFrame, y: np.ndarray, n: int | None, seed: int):
     if n is None or n >= len(y):
         return X.reset_index(drop=True), y
@@ -182,6 +193,11 @@ def make_splits(y: np.ndarray) -> dict[str, np.ndarray]:
 def prepare(name: str, download: bool) -> dict:
     fetch_raw(name, download)
     X, y = LOADERS[name](C.BASE_SEED)
+    rows_raw, pos_raw = int(len(y)), round(float(y.mean()), 4)
+    if C.BALANCE_CLASSES:
+        X, y = balance(X, y, C.BASE_SEED)
+        print(f"[{name}] balanced: {rows_raw:,} rows ({pos_raw:.1%} positive)"
+              f" -> {len(y):,} rows (50/50)")
     X, y = subsample(X, y, C.N_ROWS[name], C.BASE_SEED)
     if X.isna().any().any():
         raise ValueError(f"[{name}] NaNs left after cleaning")
@@ -196,7 +212,9 @@ def prepare(name: str, download: bool) -> dict:
     )
     summary = {"dataset": name, "rows": int(len(y)),
                "features": int(X.shape[1]),
-               "positive_rate": round(float(y.mean()), 4)}
+               "positive_rate": round(float(y.mean()), 4),
+               "rows_before_balancing": rows_raw,
+               "positive_rate_before_balancing": pos_raw}
     print(f"[{name}] saved: {summary}")
     return summary
 

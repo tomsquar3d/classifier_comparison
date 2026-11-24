@@ -5,7 +5,7 @@
 
 ---
 
-## 🔵 STATUS — Design revised 2026-11-24; no models run
+## 🔵 STATUS — Design revised 2026-11-24 (incl. 50/50 class balancing, `05` #18); no models run
 
 Classifiers, tuning method and datasets are decided (`05` #1–11). On 2026-11-24: speed metrics added (#12); lab server lost, Covertype/HIGGS capped at 100k, SVM cap 10k, tuning on trial 1 only, MLP grid trimmed (#13–17). Data prep must be re-run at the new sizes; no classifier has run yet.
 
@@ -19,7 +19,7 @@ Replicate Caruana & Niculescu-Mizil (ICML 2006) with accuracy as the metric, and
   - From the paper: random forest, SVM (RBF), ANN (MLP), KNN
   - Modern version of a paper model: XGBoost (the paper's boosted trees)
   - New: TabPFN (tabular foundation model)
-- **Datasets (4, locked 2026-11-16):** Adult (45,222), Letter (20,000), Covertype and HIGGS (100k each, capped 2026-11-24) — see `03`
+- **Datasets (4, locked 2026-11-16), all balanced 50/50 (2026-11-24):** Adult (~22.4k after balancing), Letter (~19.9k), Covertype and HIGGS (100k each) — see `03`
 - **Partitions:** 20/80, 50/50, 80/20 train/test
 - **Trials:** 3 random stratified splits per partition, results averaged
 - **Tuning:** 5-fold `GridSearchCV` on the training split only, **once per dataset × partition × model, on trial 1**. Trials 2–3 refit the trial-1 best settings on their own split, so the 3 trials measure split-to-split variation, not tuning variation. Say this in the report.
@@ -48,7 +48,7 @@ Expect RF and boosting near the top, SVM sensitive to its settings, KNN mediocre
 
 | Rubric item | Points | How this project covers it |
 |-------------|--------|----------------------------|
-| Dataset size / challenge | 10 | Up to 100k rows per dataset (80k training rows at 80/20, 20× the paper's 4k); HIGGS is a hard problem; Adult moderately imbalanced. No large-data novelty pitch (`05` #14) |
+| Dataset size / challenge | 10 | Up to 100k rows per dataset (80k training rows at 80/20, 20× the paper's 4k); HIGGS is a hard problem. All datasets balanced 50/50, so no imbalance angle (`05` #18). No large-data novelty pitch (`05` #14) |
 | Novelty | 10 | TabPFN, XGBoost vs. the 2006 results, accuracy-vs-speed tradeoff (not in the paper) |
 | Experimental design | 50 | Full 3×3 partition/trial grid, CV tuning (trial 1), train/val/test reporting, hyperparameter plots |
 | Report | 30 | Abstract, intro, data, methods, experiments, conclusion, references |

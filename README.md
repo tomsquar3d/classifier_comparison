@@ -1,7 +1,7 @@
 # COGS 118A Classifier Comparison — Folder Contents
 **Date created:** 2026-11-04
 **Status:** Plan revised 2026-11-24 after losing the lab server — data prep must be re-run on the new platform; experiment script next, no results yet
-**Scope:** 6 classifiers × 4 binary datasets (Adult, Letter, Covertype, HIGGS — locked 2026-11-16; Covertype and HIGGS capped at 100k rows 2026-11-24) × 3 partitions × 3 trials; metrics: accuracy (train/val/test) + speed (tune, fit, predict time — added 2026-11-24)
+**Scope:** 6 classifiers × 4 binary datasets (Adult, Letter, Covertype, HIGGS — locked 2026-11-16; Covertype and HIGGS capped at 100k rows and all balanced 50/50, 2026-11-24) × 3 partitions × 3 trials; metrics: accuracy (train/val/test) + speed (tune, fit, predict time — added 2026-11-24)
 
 ---
 

@@ -5,7 +5,7 @@
 
 ---
 
-## 🔵 STATUS — 17 decisions logged (2026-11-04 planning, 2026-11-16 setup, 2026-11-24 speed metrics + replan after losing the lab server)
+## 🔵 STATUS — 18 decisions logged (2026-11-04 planning, 2026-11-16 setup, 2026-11-24 speed metrics + replan after losing the lab server)
 
 #13–17 were made in a separate 2026-11-24 chat and recorded in the claude.ai project doc `project-design.md`; Tom confirmed syncing them here the same day. #14 partly reverses #6; #13 replaces the launcher part of #11.
 
@@ -114,3 +114,9 @@ Entries are permanent. If a decision is reversed, add a new entry pointing back 
 **Decision:** MLP uses early stopping and a grid of 6–8 combinations. If the timing test shows the sweep is still too slow, drop to 3-fold CV and document it.
 **Rationale (per project doc):** Part of the compute cuts after losing the lab server.
 **Impact:** Exact MLP grid values still to set (action item #15).
+
+## 18. Balance every dataset to 50/50 — 2026-11-24
+
+**Decision:** All four datasets are balanced to exactly 50% positive by randomly undersampling the larger class (fixed seed), after cleaning and before the 100k cap. Splits stay stratified, so all train/test splits are 50/50.
+**Rationale:** Not stated (Tom's request, 2026-11-24).
+**Impact:** Adult drops from 45,222 to about 22.4k rows and loses its natural 25% positive rate; the paper used Adult unbalanced, so Adult results are less comparable to the paper's. Letter, Covertype and HIGGS were already near 50/50 and barely change. Accuracy baseline is 50% everywhere. Drops the "imbalanced dataset" angle from the rubric's dataset-challenge item. `src/config.py` `BALANCE_CLASSES = True`; `balance()` in `src/prepare_data.py`.
