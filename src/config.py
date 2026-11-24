@@ -58,3 +58,12 @@ TRAIN_CAP = {
     "knn": None,
     "tabpfn": 10_000,   # TabPFN v2 open weights, decided 2026-11-16
 }
+
+# ---------------------------------------------------------------- speed
+# Added 2026-11-24 (decision #12). Prediction speed is timed on a fixed-size
+# random sample of each test split, not the whole test set, so per-row
+# numbers are comparable across partitions and repeats stay cheap (TabPFN on
+# an 800k-row HIGGS test set would otherwise be predicted 6 times).
+TIMING_N_ROWS = 10_000   # test rows used for the prediction-speed measurement
+TIMING_REPEATS = 5       # timed repeats; report the median
+TIMING_WARMUP = 1        # untimed warm-up calls first (GPU start-up cost)

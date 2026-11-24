@@ -1,7 +1,7 @@
 # COGS 118A Classifier Comparison — Folder Contents
 **Date created:** 2026-11-04
 **Status:** Data prepared and environment ready (2026-11-16); experiment script next, no results yet
-**Scope:** 6 classifiers × 4 binary datasets (Adult, Letter, Covertype, HIGGS — locked 2026-11-16) × 3 partitions × 3 trials
+**Scope:** 6 classifiers × 4 binary datasets (Adult, Letter, Covertype, HIGGS — locked 2026-11-16) × 3 partitions × 3 trials; metrics: accuracy (train/val/test) + speed (tune, fit, predict time — added 2026-11-24)
 
 ---
 

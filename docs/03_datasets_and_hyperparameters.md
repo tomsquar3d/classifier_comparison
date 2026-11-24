@@ -1,7 +1,7 @@
 # Datasets & Hyperparameter Reference
 **Project:** COGS 118A Classifier Comparison
 **Version:** v1 — datasets locked; Covertype/HIGGS sizes and grids not final
-**Last Updated:** 2026-11-16
+**Last Updated:** 2026-11-24
 
 ---
 
@@ -32,6 +32,10 @@ Applied to the training split only, by random subsample. Test set is never cappe
 |-------|-----|-----|
 | SVM (RBF) | 50k rows, **provisional** (`TRAIN_CAP` in `config.py`); final value after timing test | Training cost grows much faster than linear with rows |
 | TabPFN | 10k rows (v2 weights, decided 2026-11-16) | Model's built-in size limit |
+
+### Speed-timing sample — 🟣 [NEW — 2026-11-24]
+
+Prediction speed is timed on a random 10,000-row sample of each test split (`TIMING_N_ROWS`), drawn with a fixed seed so every model is timed on the same rows. 5 timed repeats, median reported, 1 untimed warm-up first. Settings in `src/config.py`; method in `01` Step 2.
 
 ### Preprocessing
 

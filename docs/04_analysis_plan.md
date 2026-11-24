@@ -1,13 +1,13 @@
 # Analysis Plan
 **Project:** COGS 118A Classifier Comparison
-**Version:** v0
-**Last Updated:** 2026-11-04
+**Version:** v1
+**Last Updated:** 2026-11-24
 
 ---
 
-## 🔵 STATUS — Design locked for classifiers and tuning; datasets proposed
+## 🔵 STATUS — Design locked; data prepared; no models run
 
-Classifier lineup and tuning method are decided (see `05`). Datasets proposed, not confirmed. Nothing has run.
+Classifiers, tuning method and datasets are decided (`05` #1–11). Speed metrics added 2026-11-24 (`05` #12). Data prep ran 2026-11-16; no classifier has run yet.
 
 ---
 
@@ -19,11 +19,14 @@ Replicate Caruana & Niculescu-Mizil (ICML 2006) with accuracy as the metric, and
   - From the paper: random forest, SVM (RBF), ANN (MLP), KNN
   - Modern version of a paper model: XGBoost (the paper's boosted trees)
   - New: TabPFN (tabular foundation model)
-- **Datasets (4, proposed):** Adult, Letter, Covertype, HIGGS — see `03`
+- **Datasets (4, locked 2026-11-16):** Adult, Letter (A–M vs. N–Z), Covertype, HIGGS — see `03`
 - **Partitions:** 20/80, 50/50, 80/20 train/test
 - **Trials:** 3 random stratified splits per partition, results averaged
 - **Tuning:** 5-fold `GridSearchCV` on the training split only
 - **Reported per cell:** mean train, validation and test accuracy, plus the best hyperparameters
+- **Speed per cell (added 2026-11-24):** tuning time, final fit time, prediction time per 1,000 rows, throughput — definitions in `01` Step 2
+
+The paper measured no speed metric. Two studies it cites did include computational cost alongside accuracy: LeCun et al. (1995) and Lim et al. (2000). Cite them as precedent.
 
 ## What the paper predicts (for comparison)
 
@@ -45,8 +48,8 @@ Expect RF and boosting near the top, SVM sensitive to its settings, KNN mediocre
 
 | Rubric item | Points | How this project covers it |
 |-------------|--------|----------------------------|
-| Dataset size / challenge | 10 | Large datasets (Covertype, HIGGS), imbalanced Letter option |
-| Novelty | 10 | TabPFN, XGBoost vs. the 2006 results, GPU-scale replication |
+| Dataset size / challenge | 10 | Large datasets (Covertype, HIGGS); Adult moderately imbalanced |
+| Novelty | 10 | TabPFN, XGBoost vs. the 2006 results, GPU-scale replication, accuracy-vs-speed tradeoff (not in the paper) |
 | Experimental design | 50 | Full 3×3 partition/trial grid, CV tuning, train/val/test reporting, hyperparameter plots |
 | Report | 30 | Abstract, intro, data, methods, experiments, conclusion, references |
 | Bonus | — | ≥5 classifiers, ≥4 datasets; Bonus Points section in the report |
@@ -65,9 +68,15 @@ Train vs. validation accuracy heatmaps — at least SVM (C × gamma) and one mor
 ### 🔲 Ranking significance (bonus)
 Bootstrap rank table like the paper's Table 4, or Friedman test + critical-difference diagram.
 
+### 🔲 Speed vs. accuracy (bonus, added 2026-11-24)
+- Speed table: tune / fit / predict time per classifier × dataset (`02` §6)
+- Scatter of test accuracy vs. prediction time (ms per 1k rows, log scale), one point per classifier, one panel per dataset. Top-left = fast and accurate.
+- Second scatter with total tuning + fit time on the x-axis — the "cost to get a model ready" view, where untuned TabPFN should stand out
+- Talking point: speed doesn't split evenly. KNN and TabPFN barely train but do their work at prediction time; RF and XGBoost are the reverse; SVM prediction cost grows with its number of support vectors.
+- ⚠️ Caveat in the report: shared GPUs (`05` #11), so times are relative comparisons on one machine, not absolute speeds.
+
 ### 🔲 Optional extras (only if time)
 - Calibration: AUC, Brier score, reliability diagrams
-- Accuracy vs. compute time
 
 ## ⚠️ Open Questions for instructor / TA
 

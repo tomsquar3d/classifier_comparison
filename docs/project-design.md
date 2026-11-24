@@ -26,6 +26,7 @@ Dropped: AdaBoost (no GPU, overlaps XGBoost), LightGBM (GPU build fiddly), RealM
 - Partitions 20/80, 50/50, 80/20 × 3 random stratified trials; splits pre-computed so every classifier sees identical rows
 - Tuning: plain GridSearchCV (5-fold, `return_train_score=True`) on training split only. Bayesian HPO dropped as overkill.
 - Report mean train / validation / test accuracy + best hyperparameters per cell
+- Speed per cell (added 2026-11-24): tuning time, final fit time, prediction ms per 1k rows (median of 5 on a fixed 10k-row test sample, after warm-up), throughput; GPU conditions logged per job
 - Scale features for SVM, KNN, ANN (inside Pipeline); not for trees
 - Document library differences (cuML vs sklearn) and any per-model subsampling (SVM, TabPFN)
 
@@ -39,4 +40,5 @@ Dropped: AdaBoost (no GPU, overlaps XGBoost), LightGBM (GPU build fiddly), RealM
 - ≥5 classifiers, ≥4 datasets (named bonus)
 - TabPFN as a modern twist; XGBoost vs paper's boosted trees
 - Rank analysis (bootstrap ranks or Friedman/critical-difference diagram)
-- Optional: calibration (AUC, Brier, reliability diagrams), accuracy vs compute time
+- Accuracy vs. speed (planned, added 2026-11-24) — paper had no speed metric
+- Optional: calibration (AUC, Brier, reliability diagrams)

@@ -5,6 +5,15 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-24 — Session 3
+**Files changed:** `src/config.py`, README.md, `docs/01`–`07`, `docs/project-design.md`
+
+- Added speed metrics to the design: tuning time, final fit time, prediction ms per 1k rows, throughput, plus GPU conditions logged per job. Logged as `05` #12. (source: Tom's request this session)
+- `src/config.py`: new `TIMING_N_ROWS = 10_000`, `TIMING_REPEATS = 5`, `TIMING_WARMUP = 1`. Not used yet — the experiment script isn't written.
+- `01` Step 2: speed-measurement procedure (warm-up, time until NumPy output, same timing sample for all models, GPU snapshot). `03`: timing-sample note. `04`: speed vs. accuracy added as a planned bonus comparison; LeCun 1995 and Lim 2000 noted as precedent; status/dataset lines brought up to date (were still "proposed"). `02`: new §6 Speed (old §6 → §7).
+- `02` §1 dataset summary: replaced ⛔ markers with the counts already recorded in `03` from the 2026-11-16 run.
+- `07`: added #25 (speed figures) and #26 (fallback clean timing pass); #10 notes updated.
+
 ## 2026-11-16 — Session 2
 **Files changed:** `src/config.py`, `src/prepare_data.py`, `.gitignore`, README.md (moved to repo root), all docs
 

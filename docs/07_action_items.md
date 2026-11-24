@@ -1,12 +1,12 @@
 # Action Items — COGS 118A Classifier Comparison
-**Last Updated:** 2026-11-16 (session 2, end)
+**Last Updated:** 2026-11-24 (session 3)
 
 ## Open
 | # | Added | Item | Blocking? | Notes |
 |---|-------|------|-----------|-------|
 | 4 | 2026-11-04 | Ask instructor/TA: is TabPFN OK as an added classifier? | No, but ask early | 04 open question 1 |
 | 5 | 2026-11-04 | Ask instructor/TA: are documented per-model training caps OK? | No | 04 open question 2 |
-| 10 | 2026-11-04 | Write per-job experiment script (01 Step 2) | Yes | Reads `data/processed/<name>.npz` + caps from `src/config.py`. Load TabPFN as v2 explicitly; set cuML RF `max_depth` explicitly |
+| 10 | 2026-11-04 | Write per-job experiment script (01 Step 2) | Yes | Reads `data/processed/<name>.npz` + caps from `src/config.py`. Load TabPFN as v2 explicitly; set cuML RF `max_depth` explicitly. Include speed timing per 01 Step 2 (`TIMING_*` in config) |
 | 11 | 2026-11-04 | Write GPU launcher with resume (01 Step 3) | Yes | Must check free GPU memory first — GPUs are shared |
 | 12 | 2026-11-04 | Run timing test; record in 02 §2 | Yes — sets sizes/caps | 01 Step 4 |
 | 13 | 2026-11-04 | Finalize Covertype and HIGGS sizes | Yes — full sweep | After #12. Set `N_ROWS` in `config.py`, re-run `prepare_data.py` |
@@ -19,6 +19,8 @@
 | 20 | 2026-11-04 | Write report incl. Bonus Points section + AI-use disclosure | Yes — submission | Due Friday night of finals week (exact date ⛔ NOT YET RECORDED) |
 | 21 | 2026-11-04 | Record exact due date | No | |
 | 24 | 2026-11-16 | Ask server owner about GPU usage etiquette (how many GPUs at once, preferred hours) | No, but before full sweep | 05 #11 |
+| 25 | 2026-11-24 | Make speed table + accuracy-vs-speed figures | No — bonus | 02 §6, 04 Speed vs. accuracy |
+| 26 | 2026-11-24 | If sweep timings are too noisy (shared GPUs), run a timing-only pass on the least-busy GPU | No | Decide after the timing test (#12) |
 
 ## Done
 | # | Added | Done | Item | Resolution |

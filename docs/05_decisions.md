@@ -1,11 +1,11 @@
 # Data Notes, Decisions & Caveats
 **Project:** COGS 118A Classifier Comparison
-**Version:** v1
-**Last Updated:** 2026-11-16
+**Version:** v1.1
+**Last Updated:** 2026-11-24
 
 ---
 
-## 🔵 STATUS — 11 decisions logged (2026-11-04 planning session, 2026-11-16 setup session)
+## 🔵 STATUS — 12 decisions logged (2026-11-04 planning, 2026-11-16 setup, 2026-11-24 speed metrics)
 
 Entries are permanent. If a decision is reversed, add a new entry pointing back to the old one.
 
@@ -76,3 +76,9 @@ Entries are permanent. If a decision is reversed, add a new entry pointing back 
 **Decision:** `prepare_data.py` creates all 9 train/test splits per dataset up front and stores them with the data. The launcher will check free GPU memory before placing each job.
 **Rationale:** Pre-computed splits guarantee every classifier is trained and tested on exactly the same rows. The server turned out to be shared: other users' jobs hold ~29–39 GB on every GPU and several run near 100%, so "one job per empty GPU" doesn't hold.
 **Impact:** Compute-time comparisons will be noisier than on a dedicated machine; caveat this if accuracy-vs-time is used as a bonus figure. Worth asking the server's owner about usage etiquette.
+
+## 12. Add speed metrics alongside accuracy — 2026-11-24
+
+**Decision:** Every job also records tuning time, final fit time, prediction time per 1,000 rows and throughput. Prediction speed is timed on a fixed 10,000-row test sample (median of 5 repeats after a warm-up), and GPU conditions are logged at the start of each job.
+**Rationale (from 2026-11-24 discussion):** Tom asked for a metric of how fast each classifier is. The paper measured none, so it's a novelty point, and the classifiers differ in where their cost falls (KNN/TabPFN at prediction time, trees at training time). A fixed-size timing sample keeps per-row numbers comparable across partitions and avoids re-predicting huge test sets several times.
+**Impact:** A few timer lines in the experiment script (action item #10) and new fields in each results file. Adds a speed table (`02` §6) and accuracy-vs-speed figures (`04`). Timings are noisy on the shared GPUs (#11), so present them as relative comparisons.
