@@ -5,6 +5,17 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-24 — Session 3
+**Files changed:** `src/config.py`, `README.md`, `docs/01`, `03`, `04`, `05`, `07`, `docs/project-design.md`; added `report/slides/experiment_design.tex` + `.pdf`
+
+- Lab server (yggdrasil) no longer available. Checked Tom's GTX 1080 Ti: ruled out (Pascal; unsupported by CUDA 13 and RAPIDS 24.02+). Plan moved to DSMLP / Kaggle / Colab on T4-class GPUs. Logged as `05` #12. (source: Tom this session; library support checked against RAPIDS, NVIDIA and PyTorch notices)
+- Estimated the sweep at ~25–45+ T4 GPU-hours at the old sizes. Tom chose to cut it: Covertype and HIGGS → 100k (`05` #13), large-data pitch dropped so every classifier sees the same data, SVM cap 50k → 10k (#14), tune on trial 1 only (#15), MLP early stopping + 6–8 combo grid (#16). New estimate ~5–10 T4 GPU-hours, unverified until the timing test.
+- `config.py`: `N_ROWS` covertype/higgs = 100,000; `TRAIN_CAP["svm"]` = 10,000. Data not yet re-prepared.
+- `04` rubric mapping rewritten without the large-data / GPU-scale claims; `01` launcher redesigned as a resumable runner for cloud sessions.
+- Added the 5-slide experiment-design deck (Beamer, moloch theme) to `report/slides/`.
+
+---
+
 ## 2026-11-16 — Session 2
 **Files changed:** `src/config.py`, `src/prepare_data.py`, `.gitignore`, README.md (moved to repo root), all docs
 
