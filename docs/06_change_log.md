@@ -13,6 +13,7 @@ Append-only. Newest first. Never edit past entries — append corrections.
 - `config.py`: `N_ROWS` covertype/higgs = 100,000; `TRAIN_CAP["svm"]` = 10,000. Data not yet re-prepared.
 - `04` rubric mapping rewritten without the large-data / GPU-scale claims; `01` launcher redesigned as a resumable runner for cloud sessions.
 - Added the 5-slide experiment-design deck (Beamer, moloch theme) to `report/slides/`.
+- Clarified that nothing from the lab server (processed data, env) is reused; all four datasets get prepared from scratch on the new platform (`01`, `03`, `07` #27, README). (source: Tom this session)
 
 ---
 

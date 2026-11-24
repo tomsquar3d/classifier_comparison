@@ -20,7 +20,7 @@ Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). Covertype and HI
 | Covertype | UCI | Largest class (class 2, Lodgepole Pine) = 1, rest = 0 (paper's rule) | 100,000 (stratified subsample of 581,012; set 2026-11-24, not yet re-run) | 54 | 48.8% | 100k |
 | HIGGS | UCI (11M raw) | Signal = 1, background = 0 | 100,000 (stratified subsample; set 2026-11-24, not yet re-run) | 28 | 53.0% | 100k |
 
-> **Note:** Adult and Letter counts are from `data/processed/dataset_summary.json` (server run 2026-11-16). Covertype and HIGGS counts are the new `N_ROWS` targets in `src/config.py` (2026-11-24); confirm % positive after re-running `prepare_data.py` on the new platform. The 2026-11-16 run had Covertype 581,012 and HIGGS 1,000,000 rows.
+> **Note:** Adult and Letter counts and all % positive values are from the 2026-11-16 lab-server run (that run had Covertype 581,012 and HIGGS 1,000,000 rows). Those files are not being reused. Covertype and HIGGS counts are the new `N_ROWS` targets in `src/config.py` (2026-11-24). Re-run `prepare_data.py` from scratch on the new platform and confirm every row in this table from the new `dataset_summary.json`.
 
 The Adult, Covertype and Letter binarization rules come from the paper (§2.5).
 

@@ -8,7 +8,7 @@
 
 ## 🔵 STATUS — Step 1 done; Steps 2–5 designed, not built
 
-Step 1 ran on the server 2026-11-16 at the old sizes; re-run on the new platform with Covertype and HIGGS at 100k (`05` #13). Steps 2–5 are the agreed plan. Everything is `[DRAFTED — not yet executed]` until it runs; then relabel 🟢 and record outputs in `02_results.md`.
+Step 1 ran on the lab server 2026-11-16 at the old sizes. Nothing from that server is reused: re-run Step 1 from scratch on the new platform (the script downloads the raw UCI files itself), with Covertype and HIGGS at 100k (`05` #13). Steps 2–5 are the agreed plan. Everything is `[DRAFTED — not yet executed]` until it runs; then relabel 🟢 and record outputs in `02_results.md`.
 
 ---
 

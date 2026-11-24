@@ -18,7 +18,7 @@
 | 21 | 2026-11-04 | Record exact due date | No | |
 | 25 | 2026-11-24 | Request DSMLP access (email datahub@ucsd.edu) | Yes — first-choice platform | Ask for a Turing+ GPU type; pool also has 1080 Tis (05 #12) |
 | 26 | 2026-11-24 | Set up Kaggle notebook with the `cogs118a` packages; re-run GPU smoke test there | Yes — backup platform | Batch "Save version" runs avoid idle timeout |
-| 27 | 2026-11-24 | Re-run `prepare_data.py` with Covertype/HIGGS at 100k; record counts + % positive in 03 | Yes — full sweep | `config.py` already updated |
+| 27 | 2026-11-24 | Run `prepare_data.py` from scratch on the new platform (all 4 datasets); record counts + % positive in 03 | Yes — full sweep | Nothing from the lab server is reused; script downloads raw UCI files. HIGGS raw is a large download — check the platform's disk space. `config.py` already updated |
 
 ## Done
 | # | Added | Done | Item | Resolution |

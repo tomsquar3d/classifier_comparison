@@ -1,6 +1,6 @@
 # COGS 118A Classifier Comparison — Folder Contents
 **Date created:** 2026-11-04
-**Status:** Design updated 2026-11-24 (lab server lost; datasets capped at 100k); data prep must be re-run on the new platform; experiment script next, no results yet
+**Status:** Design updated 2026-11-24 (lab server lost; datasets capped at 100k); data prep to be run from scratch on the new platform (nothing reused from the lab server); experiment script next, no results yet
 **Scope:** 6 classifiers × 4 binary datasets (Adult, Letter, Covertype, HIGGS — locked 2026-11-16) × 3 partitions × 3 trials
 
 ---
