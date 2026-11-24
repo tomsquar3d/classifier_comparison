@@ -1,11 +1,11 @@
 # Data Notes, Decisions & Caveats
 **Project:** COGS 118A Classifier Comparison
-**Version:** v1
-**Last Updated:** 2026-11-16
+**Version:** v2
+**Last Updated:** 2026-11-24
 
 ---
 
-## 🔵 STATUS — 11 decisions logged (2026-11-04 planning session, 2026-11-16 setup session)
+## 🔵 STATUS — 16 decisions logged (2026-11-04 planning, 2026-11-16 setup, 2026-11-24 replanning)
 
 Entries are permanent. If a decision is reversed, add a new entry pointing back to the old one.
 
@@ -76,3 +76,33 @@ Entries are permanent. If a decision is reversed, add a new entry pointing back 
 **Decision:** `prepare_data.py` creates all 9 train/test splits per dataset up front and stores them with the data. The launcher will check free GPU memory before placing each job.
 **Rationale:** Pre-computed splits guarantee every classifier is trained and tested on exactly the same rows. The server turned out to be shared: other users' jobs hold ~29–39 GB on every GPU and several run near 100%, so "one job per empty GPU" doesn't hold.
 **Impact:** Compute-time comparisons will be noisier than on a dedicated machine; caveat this if accuracy-vs-time is used as a bonus figure. Worth asking the server's owner about usage etiquette.
+
+## 12. Lab server lost; run on T4-class GPUs (DSMLP / Kaggle / Colab) — 2026-11-24
+
+**Decision:** yggdrasil is no longer available. Run on UCSD DataHub / DSMLP (first choice, access pending; request a Turing or newer GPU type with `-v`), with Kaggle (2× T4 16 GB, ~30 GPU-h/week, 12-h sessions) as backup and free Colab only for overflow.
+**Rationale:** Tom's own GTX 1080 Ti is a Pascal card. CUDA 13 dropped Pascal, RAPIDS dropped it in 24.02, and PyTorch's Pascal-capable CUDA 12.6 wheels end after 2.14, so the existing env (cuML 26.06, CUDA 13.0) won't run on it. T4s run the env unchanged.
+**Impact:** Partly replaces #6 (multi-GPU server) and makes #11's shared-server launcher checks moot. Runner must be resumable because cloud sessions get cut off. Timing comparisons only if every timed job ran on the same GPU type.
+
+## 13. Covertype and HIGGS capped at 100k rows; large-data pitch dropped — 2026-11-24
+
+**Decision:** One stratified 100k-row subsample each for Covertype and HIGGS, fixed seed, made before splitting and shared by every classifier. No full-data side runs (e.g. XGBoost-only on full HIGGS).
+**Rationale:** Full sizes put the sweep at roughly 25–45+ T4 GPU-hours. Tom chose to drop the large-data novelty pitch so every classifier is compared on the same data. Largest training set is still 80k rows, 20× the paper's 4k.
+**Impact:** Replaces the "scale datasets up" part of #6. Rubric "dataset size / challenge" now leans on 20× the paper's training size, Adult's 104 features and imbalance, and HIGGS's difficulty (`04`). Re-run `prepare_data.py`.
+
+## 14. SVM training cap 10k (was provisional 50k) — 2026-11-24
+
+**Decision:** SVM trains on a stratified 10k-row subsample of the training split when it is larger. Same test split as every other model.
+**Rationale:** RBF SVM cost grows much faster than the data; at 50k it alone would take ~20–30 T4 GPU-hours.
+**Impact:** SVM and TabPFN (#9) are the only models that see less training data. Report both caps.
+
+## 15. Tune on trial 1 only; trials 2–3 reuse those settings — 2026-11-24
+
+**Decision:** Run `GridSearchCV` once per dataset × partition × model, on trial 1. Trials 2–3 refit trial 1's best settings on their own training split and score on their own test split.
+**Rationale:** Cuts tuning time by about two-thirds. Trials then measure split-to-split variation rather than tuning variation, which is easy to state in the report.
+**Impact:** Validation accuracy and best hyperparameters come from trial 1 for each cell. Train/test accuracy is still averaged over 3 trials.
+
+## 16. MLP: early stopping and a 6–8 combo grid — 2026-11-24
+
+**Decision:** Train the MLP with early stopping and keep its grid to 6–8 combinations.
+**Rationale:** The MLP was the largest remaining cost (~10–30 T4 GPU-hours at the old settings).
+**Impact:** Grid values still to be set (`03`).

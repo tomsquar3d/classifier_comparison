@@ -1,13 +1,13 @@
 # Datasets & Hyperparameter Reference
 **Project:** COGS 118A Classifier Comparison
-**Version:** v1 — datasets locked; Covertype/HIGGS sizes and grids not final
-**Last Updated:** 2026-11-16
+**Version:** v2 — sizes and caps locked; grids not final
+**Last Updated:** 2026-11-24
 
 ---
 
-## 🔵 STATUS — Lineup locked; sizes and grids not final
+## 🔵 STATUS — Lineup, sizes and caps locked; grids not final
 
-Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). Covertype and HIGGS sizes wait on the timing test. Grids below are starting points from the paper / discussion, not final.
+Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). Covertype and HIGGS capped at 100k and SVM cap set to 10k on 2026-11-24 (`05` #13–14). `prepare_data.py` must be re-run with the new sizes. Grids below are starting points, not final.
 
 ---
 
@@ -17,10 +17,10 @@ Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). Covertype and HI
 |---------|--------|---------------------|-----------|----------|------------|--------------|
 | Adult | UCI (`adult.data` + `adult.test` combined, 48,842 raw) | Income >50K | 45,222 (rows with missing values dropped) | 104 (after one-hot) | 24.8% | Whole dataset |
 | Letter | UCI | A–M = 0, N–Z = 1 (paper's LETTER.p2, balanced) | 20,000 | 16 | 50.3% | Whole dataset |
-| Covertype | UCI | Largest class (class 2, Lodgepole Pine) = 1, rest = 0 (paper's rule) | 581,012 (full) | 54 | 48.8% | Full for now; may drop to ~100k–250k after timing test |
-| HIGGS | UCI (11M raw) | Signal = 1, background = 0 | 1,000,000 (random subsample) | 28 | 53.0% | 1M for now; may drop to ~500k after timing test |
+| Covertype | UCI | Largest class (class 2, Lodgepole Pine) = 1, rest = 0 (paper's rule) | 100,000 (stratified subsample of 581,012; set 2026-11-24, not yet re-run) | 54 | 48.8% | 100k |
+| HIGGS | UCI (11M raw) | Signal = 1, background = 0 | 100,000 (stratified subsample; set 2026-11-24, not yet re-run) | 28 | 53.0% | 100k |
 
-> **Note:** Row counts are from `data/processed/dataset_summary.json`, produced by `src/prepare_data.py` on the server 2026-11-16. Change sizes in `src/config.py` (`N_ROWS`) and re-run the script.
+> **Note:** Adult and Letter counts are from `data/processed/dataset_summary.json` (server run 2026-11-16). Covertype and HIGGS counts are the new `N_ROWS` targets in `src/config.py` (2026-11-24); confirm % positive after re-running `prepare_data.py` on the new platform. The 2026-11-16 run had Covertype 581,012 and HIGGS 1,000,000 rows.
 
 The Adult, Covertype and Letter binarization rules come from the paper (§2.5).
 
@@ -30,7 +30,7 @@ Applied to the training split only, by random subsample. Test set is never cappe
 
 | Model | Cap | Why |
 |-------|-----|-----|
-| SVM (RBF) | 50k rows, **provisional** (`TRAIN_CAP` in `config.py`); final value after timing test | Training cost grows much faster than linear with rows |
+| SVM (RBF) | 10k rows (`TRAIN_CAP` in `config.py`; was provisional 50k, changed 2026-11-24, `05` #14) | Training cost grows much faster than linear with rows; 50k would eat most of the T4 budget |
 | TabPFN | 10k rows (v2 weights, decided 2026-11-16) | Model's built-in size limit |
 
 ### Preprocessing
@@ -49,7 +49,7 @@ Applied to the training split only, by random subsample. Test set is never cappe
 | XGBoost | learning rate, max depth (or leaves), n_estimators | 2–3 knobs only, values ⛔ NOT YET RECORDED; rest at defaults |
 | SVM (RBF) | C | 10⁻², 10⁻¹, …, 10³ |
 | | gamma | 10⁻³, 10⁻², 10⁻¹, 1 |
-| ANN (MLP) | hidden layers / units, learning rate | Up to 3 hidden layers; values ⛔ NOT YET RECORDED |
+| ANN (MLP) | hidden layers / units, learning rate | Up to 3 hidden layers; grid of 6–8 combos with early stopping (`05` #16); values ⛔ NOT YET RECORDED |
 | KNN | K | 1 to ~100; exact list ⛔ NOT YET RECORDED |
 | | weighting | uniform, distance |
 | TabPFN | — | No tuning |

@@ -18,13 +18,14 @@ RESULTS_DIR = ROOT / "results"
 DATASETS = ["adult", "letter", "covertype", "higgs"]
 
 # Rows kept per dataset after cleaning. None = keep everything.
-# Covertype and HIGGS are PROVISIONAL until the timing test (action items
-# #12-13). Re-run prepare_data.py after changing them.
+# Covertype and HIGGS capped at 100k (decision #13, 2026-11-24): one
+# stratified subsample, shared by every classifier. Re-run prepare_data.py
+# after changing these.
 N_ROWS = {
     "adult": None,          # ~45k after dropping rows with missing values
     "letter": None,         # 20k
-    "covertype": None,      # full 581k for now; may drop to 100k-250k
-    "higgs": 1_000_000,     # random subsample of the 11M rows; may drop to 500k
+    "covertype": 100_000,   # stratified subsample of the full 581k
+    "higgs": 100_000,       # stratified subsample of the HIGGS rows read in
 }
 
 # Upper bound on how many HIGGS rows are read from the raw file before
@@ -53,7 +54,7 @@ def split_seed(partition: str, trial: int) -> int:
 TRAIN_CAP = {
     "rf": None,
     "xgboost": None,
-    "svm": 50_000,      # PROVISIONAL (action item #14); RBF SVM scales ~n^2
+    "svm": 10_000,      # decision #14 (2026-11-24); RBF SVM scales ~n^2
     "ann": None,
     "knn": None,
     "tabpfn": 10_000,   # TabPFN v2 open weights, decided 2026-11-16
