@@ -87,7 +87,8 @@ Rules:
 - **Time until predictions are back on the CPU as a NumPy array.** That forces the GPU to finish its work (GPU calls return before the work is done), and it counts the same data copies for every model. For cuML, set `output_type="numpy"`.
 - **Same timing sample for every model:** drawn with a fixed seed from the stored test indices, so all six models are timed on the same rows.
 - **Only `fit`/`predict` inside the timers.** No data loading, scaling setup or scoring.
-- **Record GPU conditions at job start:** GPU index, free memory and utilization (`nvidia-smi --query-gpu=index,memory.free,utilization.gpu --format=csv`). The GPUs are shared (`05` #11), so this lets noisy timings be flagged instead of guessed at.
+- **Record GPU conditions at job start:** GPU model name, index, free memory and utilization (`nvidia-smi --query-gpu=name,index,memory.free,utilization.gpu --format=csv`). This lets noisy timings be flagged, and shows which GPU type each job ran on.
+- ⚠️ **Only compare timings from the same GPU type.** If jobs end up spread across different machines or GPU models, speed numbers from different GPUs can't go in the same comparison; re-time on one GPU type instead (action item #26).
 
 Accuracy still comes from one full `predict` on the whole test set. The timing sample is only for speed.
 

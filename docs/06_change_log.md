@@ -13,6 +13,8 @@ Append-only. Newest first. Never edit past entries — append corrections.
 - `01` Step 2: speed-measurement procedure (warm-up, time until NumPy output, same timing sample for all models, GPU snapshot). `03`: timing-sample note. `04`: speed vs. accuracy added as a planned bonus comparison; LeCun 1995 and Lim 2000 noted as precedent; status/dataset lines brought up to date (were still "proposed"). `02`: new §6 Speed (old §6 → §7).
 - `02` §1 dataset summary: replaced ⛔ markers with the counts already recorded in `03` from the 2026-11-16 run.
 - `07`: added #25 (speed figures) and #26 (fallback clean timing pass); #10 notes updated.
+- Follow-up: each job also logs the GPU model name, and speed comparisons are limited to one GPU type (`01`, `04`, `05` #12, `07` #26).
+- ⚠️ Not yet in these docs: the 2026-11-24 infrastructure changes recorded in the claude.ai project doc `project-design.md` (lab server unavailable, Covertype/HIGGS capped at 100k, SVM cap 10k, tune on trial 1 only). Sync pending (action item #27).
 
 ## 2026-11-16 — Session 2
 **Files changed:** `src/config.py`, `src/prepare_data.py`, `.gitignore`, README.md (moved to repo root), all docs

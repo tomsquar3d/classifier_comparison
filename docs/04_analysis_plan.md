@@ -73,7 +73,7 @@ Bootstrap rank table like the paper's Table 4, or Friedman test + critical-diffe
 - Scatter of test accuracy vs. prediction time (ms per 1k rows, log scale), one point per classifier, one panel per dataset. Top-left = fast and accurate.
 - Second scatter with total tuning + fit time on the x-axis — the "cost to get a model ready" view, where untuned TabPFN should stand out
 - Talking point: speed doesn't split evenly. KNN and TabPFN barely train but do their work at prediction time; RF and XGBoost are the reverse; SVM prediction cost grows with its number of support vectors.
-- ⚠️ Caveat in the report: shared GPUs (`05` #11), so times are relative comparisons on one machine, not absolute speeds.
+- ⚠️ Only timings from the same GPU type go in one comparison. Present them as relative speeds on that GPU, not absolute numbers.
 
 ### 🔲 Optional extras (only if time)
 - Calibration: AUC, Brier score, reliability diagrams

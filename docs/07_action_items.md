@@ -20,7 +20,8 @@
 | 21 | 2026-11-04 | Record exact due date | No | |
 | 24 | 2026-11-16 | Ask server owner about GPU usage etiquette (how many GPUs at once, preferred hours) | No, but before full sweep | 05 #11 |
 | 25 | 2026-11-24 | Make speed table + accuracy-vs-speed figures | No — bonus | 02 §6, 04 Speed vs. accuracy |
-| 26 | 2026-11-24 | If sweep timings are too noisy (shared GPUs), run a timing-only pass on the least-busy GPU | No | Decide after the timing test (#12) |
+| 27 | 2026-11-24 | Sync repo docs + `config.py` with the 2026-11-24 changes in the claude.ai project doc (server lost, 100k caps, SVM 10k, tune on trial 1) | Yes — before the timing test | Recorded in another chat; not confirmed in this one |
+| 26 | 2026-11-24 | If sweep timings are too noisy or came from mixed GPU types, run a short timing-only pass on one GPU type | No | Decide after the sweep |
 
 ## Done
 | # | Added | Done | Item | Resolution |
