@@ -8,7 +8,7 @@
 
 ## 🔵 STATUS — No model results yet; data prep must be re-run
 
-Data prep ran on yggdrasil 2026-11-16 (§1), but Covertype and HIGGS are now capped at 100k (`05` #14) and that server is gone, so `prepare_data.py` must be re-run on the new platform. No classifier has run. Every number in this doc must come from a results file or a script run — no estimates. Superseded numbers stay visible (version table or a note) when anything is re-run. Speed results (§6) added to the plan 2026-11-24.
+Data prep ran on yggdrasil 2026-11-16 (§1), but every dataset is now capped at 12,500 rows with Adult left unbalanced (`05` #19, #21) and that server is gone, so `prepare_data.py` must be re-run on the new platform. No classifier has run. Every number in this doc must come from a results file or a script run — no estimates. Superseded numbers stay visible (version table or a note) when anything is re-run. Speed results (§6) added to the plan 2026-11-24.
 
 ---
 
@@ -22,7 +22,7 @@ Data prep ran on yggdrasil 2026-11-16 (§1), but Covertype and HIGGS are now cap
 
 ## 1. Dataset summary (after prep)
 
-> ⚠️ All four datasets are balanced to 50/50 before use (`05` #18, 2026-11-24). The table below is the 2026-11-16 run, **before balancing**; final rows fill in after the re-run (action item #29).
+> ⚠️ Letter, Covertype and HIGGS are balanced to 50/50; Adult is not (`05` #18, #21). Every dataset is then capped at 12,500 rows (`05` #19). The table below is the 2026-11-16 run of the source data; final rows fill in after the re-run (action item #29).
 
 | Dataset | Rows (pre-balancing) | Features (after encoding) | % positive (pre-balancing) |
 |---------|-----------|---------------------------|------------|
@@ -31,9 +31,9 @@ Data prep ran on yggdrasil 2026-11-16 (§1), but Covertype and HIGGS are now cap
 | Covertype | 581,012 | 54 | 48.8% |
 | HIGGS | 1,000,000 (2026-11-16 sample) | 28 | 53.0% |
 
-> Source: `data/processed/dataset_summary.json` from the 2026-11-16 yggdrasil run, as recorded in `03`. Expected after balancing (computed from the rounded % positive above, so approximate): Adult ~22.4k rows, Letter ~19.9k, Covertype and HIGGS 100,000 each — all 50% positive. Final rows for all four: ⛔ NOT YET RECORDED until the re-run (action item #29).
+> Source: `data/processed/dataset_summary.json` from the 2026-11-16 yggdrasil run, as recorded in `03`. Planned use (2026-11-26): 12,500 rows each; Adult ~24.8% positive (majority-class baseline ~75%), the others 50%. Final rows for all four: ⛔ NOT YET RECORDED until the re-run (action item #29).
 >
-> Superseded as the *used* sizes: Covertype 581,012 and HIGGS 1,000,000 (replaced by the 100k cap, `05` #14); Adult 45,222 and Letter 20,000 (replaced by balancing, `05` #18).
+> Superseded planned sizes: 100k for Covertype/HIGGS (`05` #14) and balanced Adult ~22.4k (`05` #18), both replaced 2026-11-26 (`05` #19, #21).
 
 ## 2. Timing test
 

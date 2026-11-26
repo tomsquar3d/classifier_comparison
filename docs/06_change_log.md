@@ -5,6 +5,14 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-26 — Session 6
+**Files changed:** `src/config.py`, `src/prepare_data.py`, README.md, `docs/01`–`07`, `docs/project-design.md`
+
+- Replan after checking the assignment text and the paper's protocol (Tom agreed this session): every dataset capped at 12,500 rows, so the 80/20 split trains on exactly 10k and no model needs its own cap (`05` #19); tune in every trial, as the paper did (#20); Adult left unbalanced at ~24.8% positive, like the paper's 25% (#21); TA check-in dropped (#22). #14 sizes, #15 and #16 superseded; #18 amended.
+- `src/config.py`: `N_ROWS` 12,500 for all four; `BALANCE_CLASSES` now a per-dataset dict (Adult False); `TUNE_TRIAL` removed; `TRAIN_CAP` all None except TabPFN 10k (guard only); `TIMING_N_ROWS` 10,000 → 2,500; `HIGGS_RAW_SAMPLE` 2M → 200k.
+- `src/prepare_data.py`: reads the per-dataset balancing switch; summary JSON adds `balanced` and `majority_class_baseline`. Tested on fake data in Claude's workspace: Adult-like 24.8% stays ~24.9% at 12,500 rows; HIGGS-like 53% → 50%; train sizes 2,500 / 6,250 / 10,000. Not yet run on real data.
+- `07`: closed #4, #5, #21 (due 11:59pm PST Dec 11, 2026), #32, #33; added #34 (scaling experiment for rubric item 1).
+
 ## 2026-11-24 — Session 5
 **Files changed:** `src/config.py`, `src/prepare_data.py`, README.md, `docs/02`–`07`, `docs/project-design.md`
 

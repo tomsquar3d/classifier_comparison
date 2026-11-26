@@ -5,9 +5,9 @@
 
 ---
 
-## 🔵 STATUS — Design revised 2026-11-24 (incl. 50/50 class balancing, `05` #18); no models run
+## 🔵 STATUS — Design revised 2026-11-26 (12.5k rows, tune every trial, Adult unbalanced — `05` #19–22); no models run
 
-Classifiers, tuning method and datasets are decided (`05` #1–11). On 2026-11-24: speed metrics added (#12); lab server lost, Covertype/HIGGS capped at 100k, SVM cap 10k, tuning on trial 1 only, MLP grid trimmed (#13–17). Data prep must be re-run at the new sizes; no classifier has run yet.
+Classifiers, tuning method and datasets are decided (`05` #1–11). On 2026-11-24: speed metrics added (#12); lab server lost, Covertype/HIGGS capped at 100k, SVM cap 10k, tuning on trial 1 only, MLP grid trimmed (#13–17). On 2026-11-26: every dataset 12,500 rows with no per-model caps, tuning in every trial, Adult left unbalanced, TA check-in dropped (#19–22). Data prep must be re-run at the new sizes; no classifier has run yet.
 
 ---
 
@@ -19,11 +19,11 @@ Replicate Caruana & Niculescu-Mizil (ICML 2006) with accuracy as the metric, and
   - From the paper: random forest, SVM (RBF), ANN (MLP), KNN
   - Modern version of a paper model: XGBoost (the paper's boosted trees)
   - New: TabPFN (tabular foundation model)
-- **Datasets (4, locked 2026-11-16), all balanced 50/50 (2026-11-24):** Adult (~22.4k after balancing), Letter (~19.9k), Covertype and HIGGS (100k each) — see `03`
+- **Datasets (4, locked 2026-11-16), 12,500 rows each (2026-11-26):** Adult (unbalanced, ~24.8% positive, as in the paper), Letter, Covertype, HIGGS (balanced 50/50) — see `03`
 - **Partitions:** 20/80, 50/50, 80/20 train/test
 - **Trials:** 3 random stratified splits per partition, results averaged
-- **Tuning:** 5-fold `GridSearchCV` on the training split only, **once per dataset × partition × model, on trial 1**. Trials 2–3 refit the trial-1 best settings on their own split, so the 3 trials measure split-to-split variation, not tuning variation. Say this in the report.
-- **Reported per cell:** mean train and test accuracy over 3 trials, validation accuracy from the trial-1 CV, plus the best hyperparameters
+- **Tuning:** 5-fold `GridSearchCV` on the training split only, **in every trial** (as the paper did, `05` #20).
+- **Reported per cell:** mean train, validation and test accuracy over 3 trials, plus the best hyperparameters per trial
 - **Speed per cell (added 2026-11-24):** tuning time, final fit time, prediction time per 1,000 rows, throughput — definitions in `01` Step 2
 
 The paper measured no speed metric. Two studies it cites did include computational cost alongside accuracy: LeCun et al. (1995) and Lim et al. (2000). Cite them as precedent.
@@ -48,9 +48,9 @@ Expect RF and boosting near the top, SVM sensitive to its settings, KNN mediocre
 
 | Rubric item | Points | How this project covers it |
 |-------------|--------|----------------------------|
-| Dataset size / challenge | 10 | Up to 100k rows per dataset (80k training rows at 80/20, 20× the paper's 4k); HIGGS is a hard problem. All datasets balanced 50/50, so no imbalance angle (`05` #18). No large-data novelty pitch (`05` #14) |
+| Dataset size / challenge | 10 | 12,500 rows per dataset (`05` #19), drawn from large sources (Covertype 581k, HIGGS 11M); HIGGS is a hard problem; Adult kept imbalanced (`05` #21). ⚠️ Smaller than the earlier plan — see open question below |
 | Novelty | 10 | TabPFN, XGBoost vs. the 2006 results, accuracy-vs-speed tradeoff (not in the paper) |
-| Experimental design | 50 | Full 3×3 partition/trial grid, CV tuning (trial 1), train/val/test reporting, hyperparameter plots |
+| Experimental design | 50 | Full 3×3 partition/trial grid, CV tuning in every trial, train/val/test reporting, hyperparameter plots, confusion matrices |
 | Report | 30 | Abstract, intro, data, methods, experiments, conclusion, references |
 | Bonus | — | ≥5 classifiers, ≥4 datasets; Bonus Points section in the report |
 
@@ -80,9 +80,9 @@ Bootstrap rank table like the paper's Table 4, or Friedman test + critical-diffe
 
 ## ⚠️ Open Questions for instructor / TA
 
-1. Is adding TabPFN (not on the assignment's classifier list) fine as a bonus classifier? The assignment asks to discuss your own ideas beforehand.
-2. Are per-model training caps (SVM and TabPFN at 10k training rows) acceptable if documented?
-3. Is tuning once per cell (trial 1) and reusing those settings for trials 2–3 acceptable?
+Not sending these (`05` #22). Earlier questions on TabPFN, per-model caps, trial-1 tuning and balancing are closed by `05` #19–22.
+
+Still open (for Tom, not the TA): does the 12.5k cap cost points on rubric item 1 ("How challenging and large are the datasets", 10 pts)? Option under discussion 2026-11-26: a separate, clearly labelled scaling experiment on larger Covertype/HIGGS samples for the GPU-friendly models.
 
 ## Report
 

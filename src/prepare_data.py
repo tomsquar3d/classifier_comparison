@@ -194,10 +194,13 @@ def prepare(name: str, download: bool) -> dict:
     fetch_raw(name, download)
     X, y = LOADERS[name](C.BASE_SEED)
     rows_raw, pos_raw = int(len(y)), round(float(y.mean()), 4)
-    if C.BALANCE_CLASSES:
+    if C.BALANCE_CLASSES[name]:
         X, y = balance(X, y, C.BASE_SEED)
         print(f"[{name}] balanced: {rows_raw:,} rows ({pos_raw:.1%} positive)"
               f" -> {len(y):,} rows (50/50)")
+    else:
+        print(f"[{name}] left unbalanced: {rows_raw:,} rows "
+              f"({pos_raw:.1%} positive)")
     X, y = subsample(X, y, C.N_ROWS[name], C.BASE_SEED)
     if X.isna().any().any():
         raise ValueError(f"[{name}] NaNs left after cleaning")
@@ -213,6 +216,8 @@ def prepare(name: str, download: bool) -> dict:
     summary = {"dataset": name, "rows": int(len(y)),
                "features": int(X.shape[1]),
                "positive_rate": round(float(y.mean()), 4),
+               "balanced": bool(C.BALANCE_CLASSES[name]),
+               "majority_class_baseline": round(float(max(y.mean(), 1 - y.mean())), 4),
                "rows_before_balancing": rows_raw,
                "positive_rate_before_balancing": pos_raw}
     print(f"[{name}] saved: {summary}")

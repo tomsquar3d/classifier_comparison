@@ -1,56 +1,49 @@
 # Datasets & Hyperparameter Reference
 **Project:** COGS 118A Classifier Comparison
-**Version:** v3 — datasets locked and balanced 50/50; Covertype/HIGGS capped at 100k; SVM cap 10k; grids not final
-**Last Updated:** 2026-11-24
+**Version:** v4 — every dataset 12,500 rows; Adult unbalanced, others 50/50; no per-model caps; grids not final
+**Last Updated:** 2026-11-26
 
 ---
 
 ## 🔵 STATUS — Lineup and sizes set; grids not final
 
-Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). Covertype and HIGGS capped at 100k rows and SVM cap set to 10k on 2026-11-24 (`05` #14–15). All datasets balanced 50/50 (`05` #18, same day). Data prep not yet re-run with either change. Grids below are starting points, not final.
+Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). On 2026-11-26 every dataset was capped at 12,500 rows, per-model caps dropped and Adult left unbalanced (`05` #19, #21). Data prep not yet re-run. Grids below are starting points, not final.
 
 ---
 
 ## Datasets (locked 2026-11-16)
 
-| Dataset | Source | Positive class rule | Rows after cleaning (2026-11-16) | Features | % positive (before balancing) | Planned size (balanced 50/50) |
+| Dataset | Source | Positive class rule | Rows after cleaning (2026-11-16) | Features | % positive (source data) | Used: rows / % positive |
 |---------|--------|---------------------|-----------|----------|------------|--------------|
-| Adult | UCI (`adult.data` + `adult.test` combined, 48,842 raw) | Income >50K | 45,222 (rows with missing values dropped) | 104 (after one-hot) | 24.8% | ~22.4k (all ~11.2k positives + equal number of negatives) |
-| Letter | UCI | A–M = 0, N–Z = 1 (paper's LETTER.p2, balanced) | 20,000 | 16 | 50.3% | ~19.9k |
-| Covertype | UCI | Largest class (class 2, Lodgepole Pine) = 1, rest = 0 (paper's rule) | 581,012 full (2026-11-16) | 54 | 48.8% (full) | **100,000** (50k per class) |
-| HIGGS | UCI (11M raw) | Signal = 1, background = 0 | 1,000,000 subsample (2026-11-16) | 28 | 53.0% (1M) | **100,000** (50k per class) |
+| Adult | UCI (`adult.data` + `adult.test` combined, 48,842 raw) | Income >50K | 45,222 (rows with missing values dropped) | 104 (after one-hot) | 24.8% | **12,500 / ~24.8% (not balanced)** |
+| Letter | UCI | A–M = 0, N–Z = 1 (paper's LETTER.p2) | 20,000 | 16 | 50.3% | **12,500 / 50%** |
+| Covertype | UCI | Largest class (class 2, Lodgepole Pine) = 1, rest = 0 (paper's rule) | 581,012 | 54 | 48.8% | **12,500 / 50%** |
+| HIGGS | UCI (11M raw) | Signal = 1, background = 0 | 1,000,000 subsample (2026-11-16) | 28 | 53.0% (1M) | **12,500 / 50%** |
 
-> **Note:** Row counts are from `data/processed/dataset_summary.json`, produced by `src/prepare_data.py` on yggdrasil 2026-11-16. Change sizes in `src/config.py` (`N_ROWS`) and re-run the script.
+> **Note:** Source-data counts are from `data/processed/dataset_summary.json`, produced by `src/prepare_data.py` on yggdrasil 2026-11-16. Final counts fill in after the re-run (action item #29). Change sizes in `src/config.py` (`N_ROWS`) and re-run the script.
 >
-> **100k subsample (2026-11-24):** taken once per dataset, stratified on the label, fixed seed (`BASE_SEED`), before any splits — so every classifier uses the same 100k rows. HIGGS: the script first reads a random ~2M rows of the 11M file (`HIGGS_RAW_SAMPLE`), then takes the stratified 100k from those. The largest training set is now 80k rows (80/20), still 20× the paper's 4k.
+> **12,500-row subsample (2026-11-26, `05` #19):** taken once per dataset, stratified on the label, fixed seed (`BASE_SEED`), after balancing and before any splits — so every classifier uses the same rows. Training sizes: 2,500 / 6,250 / 10,000 (20/80, 50/50, 80/20); the paper trained on 4,000. HIGGS: the script reads a random ~200k rows of the 11M file (`HIGGS_RAW_SAMPLE`) first.
+>
+> **Paper comparison:** the paper's Table 1 lists Adult at 25% positive and LETTER.p2 at 53%. It lists COV_TYPE at 36% positive even though the text says "largest class"; ours comes out 48.8% (class 2). Likely a different subset or class — note it in the report.
 
 The Adult, Covertype and Letter binarization rules come from the paper (§2.5).
 
-### ⚠️ Class balancing — 🟠 [NEW — 2026-11-24]
+### ⚠️ Class balancing — 🟠 [UPDATED — 2026-11-26]
 
-Every dataset is made exactly 50/50 by randomly dropping rows of the larger class (fixed seed, `BASE_SEED`), after cleaning and **before** the 100k cap. Then the cap and all splits are stratified, so every train and test split is 50/50 too. Switch: `BALANCE_CLASSES` in `src/config.py`; code: `balance()` in `src/prepare_data.py` (tested on fake data 2026-11-24: 30% → 50% positive, all test splits 50%). `dataset_summary.json` now also records rows and % positive before balancing.
+Letter, Covertype and HIGGS are made exactly 50/50 by randomly dropping rows of the larger class (fixed seed), after cleaning and **before** the 12.5k cap (`05` #18). **Adult is left unbalanced** at its natural ~24.8% positive (`05` #21), matching the paper's Adult (25%). All splits are stratified, so every split keeps its dataset's rate. Switch: `BALANCE_CLASSES` dict in `src/config.py`.
 
-Planned sizes above are approximate (from rounded rates) until the re-run.
-
-Consequences to state in the report:
-- Accuracy's baseline is now 50% on every dataset, so accuracies are comparable across datasets.
-- Adult loses about half its rows, and its 25%-positive real-world mix is gone. The paper used Adult unbalanced, so Adult numbers are less directly comparable to the paper's.
+The paper did not rebalance any dataset; it reported each dataset's % positive (%POZ) in its dataset table. Consequences to state in the report:
+- Include a "% positive" column in the dataset table, like the paper.
+- Adult's accuracy baseline is ~75% (always predict ≤50K), not 50%. Show the majority-class baseline next to Adult accuracies.
 - Letter, Covertype and HIGGS were already near 50/50, so balancing barely changes them.
 
-### ⚠️ Per-model training caps
+### Per-model training caps — removed 2026-11-26
 
-Applied to the training split only, by random subsample. Test set is never capped, so all models are scored on the same test data. Report every cap in the methods section.
-
-| Model | Cap | Why |
-|-------|-----|-----|
-| SVM (RBF) | **10k rows** (2026-11-24; was provisional 50k) | Runtime — training cost grows much faster than linear with rows |
-| TabPFN | 10k rows (v2 weights, decided 2026-11-16) | Hard model limit |
-
-SVM and TabPFN are the only places classifiers see different training data (a stratified 10k subsample of the training split when it's larger than 10k). Same test split as everyone else.
+None. The largest training split is 10,000 rows, which fits TabPFN v2's limit, and SVM no longer needs a runtime cap (`05` #19). `TRAIN_CAP` in `src/config.py` keeps TabPFN's 10k as a guard; the experiment script should stop with an error if a training split ever exceeds it, not subsample silently.
 
 ### Speed-timing sample — 🟣 [NEW — 2026-11-24]
 
-Prediction speed is timed on a random 10,000-row sample of each test split (`TIMING_N_ROWS`), drawn with a fixed seed so every model is timed on the same rows. 5 timed repeats, median reported, 1 untimed warm-up first. Settings in `src/config.py`; method in `01` Step 2.
+Prediction speed is timed on a random 2,500-row sample of each test split (= the smallest test split) (`TIMING_N_ROWS`), drawn with a fixed seed so every model is timed on the same rows. 5 timed repeats, median reported, 1 untimed warm-up first. Settings in `src/config.py`; method in `01` Step 2.
 
 ### Preprocessing
 
@@ -61,7 +54,7 @@ Prediction speed is timed on a random 10,000-row sample of each test split (`TIM
 
 ## Hyperparameter grids (starting points, not final)
 
-Tuning runs on trial 1 only; trials 2–3 reuse the trial-1 best settings (`05` #16). 5-fold CV, with 3-fold as the fallback if the timing test says it's too slow.
+Tuning runs in every trial, on that trial's own training split (`05` #20). 5-fold CV, with 3-fold as the fallback if the timing test says it's too slow.
 
 | Classifier | Hyperparameters | Values |
 |------------|-----------------|--------|

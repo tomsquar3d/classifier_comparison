@@ -91,19 +91,19 @@ Entries are permanent. If a decision is reversed, add a new entry pointing back 
 **Rationale (per project doc):** Personal GTX 1080 Ti ruled out — it's a Pascal GPU, and CUDA 13 / RAPIDS 24.02+ need newer cards. Turing+ keeps the existing environment usable. Resumable runner so a cut-off session loses one job, not the sweep. Why yggdrasil became unavailable: not stated.
 **Impact:** Replaces the multi-GPU launcher part of #11. Data prep must be re-run on the new platform. Speed timings only comparable within one GPU type (#12).
 
-## 14. Covertype and HIGGS capped at 100k rows; no large-data pitch — 2026-11-24
+## 14. Covertype and HIGGS capped at 100k rows; no large-data pitch — 2026-11-24 (sizes superseded by #19)
 
 **Decision:** Covertype and HIGGS each use one stratified, fixed-seed 100k-row subsample taken before any splits. No full-data side runs.
 **Rationale (per project doc):** Compute cut after losing the lab server. Dropping the large-data novelty pitch keeps every classifier compared on the same data sizes.
 **Impact:** Partly reverses #6 (bigger datasets). Largest training set is 80k rows (80/20), still 20× the paper's 4k. The "dataset size" rubric item now rests on 100k-row datasets rather than 500k–1M.
 
-## 15. SVM training cap 50k → 10k — 2026-11-24
+## 15. SVM training cap 50k → 10k — 2026-11-24 (superseded by #19)
 
 **Decision:** SVM trains on at most 10k rows (stratified subsample of the training split), same as TabPFN.
 **Rationale (per project doc):** Runtime. (TabPFN's 10k cap is a hard model limit; SVM's is a compute choice.)
 **Impact:** SVM and TabPFN are the only models that see different training data. Document both caps in the report.
 
-## 16. Tune on trial 1 only — 2026-11-24
+## 16. Tune on trial 1 only — 2026-11-24 (superseded by #20)
 
 **Decision:** Grid search runs once per dataset × partition × model, on trial 1. Trials 2–3 refit those best settings on their own training split and score on their own test split.
 **Rationale (per project doc):** Part of the compute cuts. The 3 trials then measure split-to-split variation, not tuning variation — say so in the report.
@@ -115,8 +115,33 @@ Entries are permanent. If a decision is reversed, add a new entry pointing back 
 **Rationale (per project doc):** Part of the compute cuts after losing the lab server.
 **Impact:** Exact MLP grid values still to set (action item #15).
 
-## 18. Balance every dataset to 50/50 — 2026-11-24
+## 18. Balance every dataset to 50/50 — 2026-11-24 (amended by #21: Adult stays unbalanced)
 
 **Decision:** All four datasets are balanced to exactly 50% positive by randomly undersampling the larger class (fixed seed), after cleaning and before the 100k cap. Splits stay stratified, so all train/test splits are 50/50.
 **Rationale:** Not stated (Tom's request, 2026-11-24).
 **Impact:** Adult drops from 45,222 to about 22.4k rows and loses its natural 25% positive rate; the paper used Adult unbalanced, so Adult results are less comparable to the paper's. Letter, Covertype and HIGGS were already near 50/50 and barely change. Accuracy baseline is 50% everywhere. Drops the "imbalanced dataset" angle from the rubric's dataset-challenge item. `src/config.py` `BALANCE_CLASSES = True`; `balance()` in `src/prepare_data.py`.
+
+## 19. Every dataset capped at 12,500 rows; no per-model caps — 2026-11-26
+
+**Decision:** All four datasets use one stratified, fixed-seed 12,500-row subsample taken before any splits. Training sizes are 2,500 / 6,250 / 10,000 rows for 20/80, 50/50, 80/20. The 80/20 split fits TabPFN's 10k limit exactly, so the SVM and TabPFN training caps are dropped.
+**Rationale:** Every classifier sees identical rows in every cell, as in the paper (every model trained on the same 4,000 rows per trial, §2.4 / Table 1). A flat 10k cap on *training* rows was considered and rejected: on the bigger datasets all three partitions would train on 10k rows, which would erase the 20/80 vs 80/20 comparison the rubric grades. Much smaller data also makes tuning every trial (#20) affordable.
+**Impact:** Supersedes the sizes in #14 and the cap in #15. Largest training set is 10k rows (2.5× the paper's 4k), not 80k. Test sets shrink to 2,500 rows at 80/20 (the paper used large final test sets) — state this. Weakens the rubric's "how large are the datasets" item (10 pts); see open question in `04`. `TIMING_N_ROWS` → 2,500 (smallest test split).
+
+## 20. Tune in every trial — 2026-11-26
+
+**Decision:** `GridSearchCV` (5-fold) runs on each trial's own training split, for every dataset × partition × trial × model. Replaces #16.
+**Rationale:** Matches the paper (best parameters chosen on each trial's own 1k validation set) and the rubric ("each time you always report the best accuracy under the chosen hyper-parameter"). Affordable after #19.
+**Impact:** Validation accuracy is now a mean over 3 trials, like train and test. Tuning time recorded every job. Trials no longer depend on each other, so the runner can run jobs in any order. Closes TA question on trial-1 tuning.
+
+## 21. Adult stays unbalanced — 2026-11-26
+
+**Decision:** Amends #18. Adult keeps its natural class mix (~24.8% positive; the paper's Adult was 25%). Letter, Covertype and HIGGS stay balanced 50/50. Splits stay stratified.
+**Rationale:** Tom's call: keep one dataset unbalanced and note it. Adult then matches the paper's version directly. The paper did not rebalance anything; it reported class balance as a %POZ column in its dataset table.
+**Impact:** Report a "% positive" column in the dataset table (as the paper did) and show the majority-class baseline (~75%) next to Adult accuracies. `BALANCE_CLASSES` in `src/config.py` is now a per-dataset dict; `dataset_summary.json` records `balanced` and `majority_class_baseline`.
+
+## 22. No TA check-in on design choices — 2026-11-26
+
+**Decision:** Not sending the TA questions (#4, #5, #32, #33 in `07`).
+**Rationale:** TabPFN is the project's novelty and fits the rubric's bonus item (b). #19–21 remove the other questions (no per-model caps, tuning every trial, Adult matches the paper).
+**Impact:** Closes those action items.
+
