@@ -12,9 +12,8 @@
 | 17 | 2026-11-04 | Aggregate results; fill 02 tables | Yes — report | |
 | 18 | 2026-11-04 | Make figures: bar charts, learning curves, heatmaps, rank plot | Yes — report | 04 Planned Comparisons |
 | 20 | 2026-11-04 | Write report incl. Bonus Points section + AI-use disclosure | Yes — submission | Due 11:59pm PST, Fri Dec 11, 2026 |
-| 28 | 2026-11-24 | Get DSMLP access (email datahub@ucsd.edu); request a Turing-or-newer GPU type | Yes — compute | 05 #13. Kaggle is the backup |
 | 29 | 2026-11-24 | Re-run `prepare_data.py` on the new platform (12.5k caps, natural class rates); record final rows for all 4 datasets in 02/03 | Yes — all runs | Old `data/` was on yggdrasil. Check all 12,500 rows with rates ≈ Adult 24.8%, Letter 50.3%, Covertype 48.8%, HIGGS 53.0% |
-| 30 | 2026-11-24 | Rebuild the env on the new platform; check its GPU driver supports CUDA 13 (else use CUDA 12 builds) and re-record versions in 04 | Yes — all runs | Env was built for CUDA 13.0 / driver 580 on yggdrasil; cloud drivers may be older |
+| 30 | 2026-11-24 | Rebuild the env on DSMLP and re-record versions in 04; run `src/smoke_test.py` | Yes — all runs | Driver checked 2026-11-26: 580.126.20 / CUDA 13.0, same as yggdrasil, so the CUDA 13 spec should work |
 | 31 | 2026-11-24 | Plan how results files get out of each Kaggle/Colab session (push to repo or save as dataset) | Yes — before sweep | 01 Step 3 |
 | 34 | 2026-11-26 | Decide on a scaling experiment for rubric item 1 (dataset size, 10 pts): larger Covertype/HIGGS samples for GPU models, reported separately from the main 12.5k study | No | 04 open question |
 | 25 | 2026-11-24 | Make speed table + accuracy-vs-speed figures | No — bonus | 02 §6, 04 Speed vs. accuracy |
@@ -23,6 +22,7 @@
 ## Done
 | # | Added | Done | Item | Resolution |
 |---|-------|------|------|------------|
+| 28 | 2026-11-24 | 2026-11-26 | Get DSMLP access | Tom already had access. Launch: `launch-scipy-ml.sh -g 1 -c 4 -m 16 -l gpu-class=medium` → RTX PRO 6000 Blackwell **MIG slice** (24 GB, 46 SMs), driver 580.126.20, CUDA 13.0. Letter data prep ran OK in the container |
 | 19 | 2026-11-04 | 2026-11-26 | Choose report template | NeurIPS LaTeX |
 | 4 | 2026-11-04 | 2026-11-26 | Ask TA: is TabPFN OK? | Not asking — TabPFN is the project's novelty (05 #22) |
 | 5 | 2026-11-04 | 2026-11-26 | Ask TA: are per-model caps OK? | Moot — caps dropped (05 #19) |

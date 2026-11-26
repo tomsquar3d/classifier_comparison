@@ -11,6 +11,7 @@ Append-only. Newest first. Never edit past entries — append corrections.
 - Balancing switched off for all four datasets; every dataset keeps its natural class rate, as in the paper (`05` #23, reverses #18). (source: Tom's call this session)
 - Hyperparameter grids proposed from the paper's §2.1 in `03`, incl. moving KNN to scikit-learn for distance weighting (`05` #24). Pending Tom's OK.
 - Report template chosen: NeurIPS LaTeX (closes `07` #19).
+- DSMLP working (closes `07` #28): RTX PRO 6000 Blackwell MIG slice, 24 GB, driver 580.126.20, CUDA 13.0. `prepare_data.py --only letter` ran in the container: 12,500 rows, 50.3% positive. New `src/smoke_test.py` fits all 6 models on random data on the GPU and prints versions.
 
 ## 2026-11-26 — Session 6
 **Files changed:** `src/config.py`, `src/prepare_data.py`, README.md, `docs/01`–`07`, `docs/project-design.md`
