@@ -90,18 +90,20 @@ Template choice: ⛔ NOT YET RECORDED (NeurIPS / ICML / ICLR / Google Docs all a
 
 ## Software
 
-Recorded 2026-11-16 on yggdrasil (conda env `cogs118a`, CUDA 13.0). Must be rebuilt on the new platform; versions may change if the platform's GPU driver doesn't support CUDA 13 (action item #30):
+Rebuilt 2026-11-26 on DSMLP (`launch-scipy-ml.sh -g 1 -c 4 -m 16 -l gpu-class=medium`; RTX PRO 6000 Blackwell MIG slice, 24 GB, 46 SMs; driver 580.126.20, CUDA 13.0). Env at `~/envs/cogs118a` (conda prefix env in the home folder, so it survives container restarts). Same versions as the 2026-11-16 yggdrasil env:
 
 | Package | Version |
 |---|---|
 | Python | 3.11 |
-| RAPIDS cuML | 26.06 (conda, rapidsai channel) |
+| RAPIDS cuML | 26.06 (conda, rapidsai channel); cupy 14.2.0 |
 | xgboost | 3.2.0 |
 | PyTorch | 2.14.1+cu130 |
 | skorch | 1.4.0 |
 | tabpfn | 10.0.0 (using v2 weights) |
 | scikit-learn | 1.9.1 |
 
-All six models passed a GPU smoke test on 2026-11-16.
+Build steps (DSMLP): `conda create -y -p ~/envs/cogs118a -c rapidsai -c conda-forge python=3.11 cuml=26.06 "cuda-version=13.0" scikit-learn=1.9.1`; `pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu130`; `pip install --no-cache-dir xgboost==3.2.0 skorch==1.4.0 tabpfn==10.0.0`. Notes: run `source ~/.bashrc` after `conda init`; pip warns that cuML needs `cupy-cuda13x`/`libcuml` — harmless, conda provides them (don't pip-install cupy). Home quota is small: run `conda clean -a -y` and `pip cache purge` after building.
+
+`src/smoke_test.py` passed 6/6 on DSMLP 2026-11-26 (random data; RF, SVM on cuML; XGBoost and MLP on CUDA; KNN on scikit-learn; TabPFN v2 on CUDA). XGBoost warns that predict input is on the CPU — expected, since every model gets NumPy input and is timed the same way.
 
 ⚠️ cuML's random forest `max_depth` default changes from 16 to unlimited in cuML 26.08. Always set `max_depth` explicitly so a library update can't change results.
