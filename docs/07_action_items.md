@@ -4,8 +4,7 @@
 ## Open
 | # | Added | Item | Blocking? | Notes |
 |---|-------|------|-----------|-------|
-| 35 | 2026-11-26 | Fix ANN undertraining: run `src/ann_check.py` on DSMLP, pick lr / patience / optimizer, update `config.ANN_*`, re-run ANN timing job | Yes — full sweep | 02 §2 |
-| 16 | 2026-11-04 | Run full 216-job sweep | Yes — results | |
+| 16 | 2026-11-04 | Run full 216-job sweep | Yes — results | In tmux on the login node; `--trials 1`, then 2, then 3 |
 | 17 | 2026-11-04 | Aggregate results; fill 02 tables | Yes — report | |
 | 18 | 2026-11-04 | Make figures: bar charts, learning curves, heatmaps, rank plot | Yes — report | 04 Planned Comparisons |
 | 20 | 2026-11-04 | Write report incl. Bonus Points section + AI-use disclosure | Yes — submission | Due 11:59pm PST, Fri Dec 11, 2026 |
@@ -16,6 +15,7 @@
 ## Done
 | # | Added | Done | Item | Resolution |
 |---|-------|------|------|------------|
+| 35 | 2026-11-26 | 2026-11-26 | Check ANN undertraining | Not undertrained: all lr/patience/optimizer settings ~0.66 held-out; settings unchanged (02 §2). Delete the timing-test ANN JSON so it re-runs with the new prediction batch size |
 | 12 | 2026-11-04 | 2026-11-26 | Run timing test | 15m17s for HIGGS 80/20, all 6 models; keep 5-fold CV; sweep ~5–6 h (≤9.2 h). ANN undertrained → #35 (02 §2) |
 | 10 | 2026-11-04 | 2026-11-26 | Write per-job experiment script | `src/run_job.py` + `src/models.py`; tested on fake data, CPU mode (01 Step 2) |
 | 11 | 2026-11-04 | 2026-11-26 | Write resumable runner | `src/run_sweep.py`; tested incl. skip-if-done (01 Step 3) |

@@ -50,7 +50,18 @@ Majority-class baseline (HIGGS): 0.5296.
 
 Findings:
 - **Sweep estimate:** ≤ 15.3 min × 36 ≈ 9.2 h upper bound (every job at the 10k size); smaller partitions are faster, so ~5–6 h expected. Fits a 12-h container → **keep 5-fold CV** (no 3-fold fallback).
-- **ANN undertrained:** train accuracy only 0.70 and the smallest net won — points to early stopping / learning rate, not capacity. Diagnostic `src/ann_check.py` written; ANN settings to be fixed before the sweep. ANN numbers above are superseded once fixed.
+- **ANN not undertrained (checked 2026-11-26):** `src/ann_check.py` on this split, 2×128 net, 8,000 fit rows / 2,000 held out:
+
+  | Setting | Epochs run | Best epoch | Train | Held-out |
+  |---|---|---|---|---|
+  | SGD lr 0.01, patience 10 (current) | 31 | 21 | 0.725 | 0.663 |
+  | SGD lr 0.01, patience 30 | 51 | 21 | 0.725 | 0.663 |
+  | SGD lr 0.05, patience 10 | 20 | 10 | 0.751 | 0.659 |
+  | SGD lr 0.1, patience 10 | 14 | 4 | 0.703 | 0.655 |
+  | SGD lr 0.1, patience 30 | 34 | 4 | 0.703 | 0.655 |
+  | Adam lr 0.001, patience 10 | 17 | 7 | 0.713 | 0.656 |
+
+  Every setting ends at ~0.66 held-out; longer patience finds the same best epoch; higher lr / Adam don't help. Low training accuracy is early stopping keeping pre-overfitting weights, not slow learning. HIGGS at ~8k rows is data-limited for neural nets (smallest net won the timing test). **Settings unchanged.**
 - **ANN predict time** inflated by 128-row prediction batches; prediction batch raised to 4,096 (`ANN_PREDICT_BATCH_SIZE`), accuracy unaffected.
 - **KNN train accuracy 1.000** is expected with distance weighting (each training point is its own nearest neighbour) — say so in the report.
 - **TabPFN predict** is genuinely slow (in-context model re-reads the training set at prediction time) — use in the speed-vs-accuracy section.
