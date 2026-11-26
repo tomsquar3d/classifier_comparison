@@ -33,15 +33,15 @@ N_ROWS = {
 }
 
 # Balance classes to exactly 50/50 by randomly dropping rows of the larger
-# class, after cleaning and BEFORE the N_ROWS cap (decision #18).
-# 2026-11-26 (decision #21): Adult stays unbalanced (~24.8% positive, the
-# paper's Adult was 25%) so one dataset keeps its natural class mix, as in
-# the paper. Report % positive per dataset and the majority-class baseline.
+# class, after cleaning and BEFORE the N_ROWS cap. Turned OFF for every
+# dataset on 2026-11-26 (decision #23): all four keep their natural class
+# rates, as in the paper, which reported % positive per dataset instead of
+# rebalancing. Report % positive and the majority-class baseline per dataset.
 BALANCE_CLASSES = {
-    "adult": False,
-    "letter": True,
-    "covertype": True,
-    "higgs": True,
+    "adult": False,      # ~24.8% positive
+    "letter": False,     # ~50.3%
+    "covertype": False,  # ~48.8%
+    "higgs": False,      # ~53.0%
 }
 
 # Upper bound on how many HIGGS rows are read from the raw file before

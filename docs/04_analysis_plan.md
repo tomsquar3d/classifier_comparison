@@ -19,7 +19,7 @@ Replicate Caruana & Niculescu-Mizil (ICML 2006) with accuracy as the metric, and
   - From the paper: random forest, SVM (RBF), ANN (MLP), KNN
   - Modern version of a paper model: XGBoost (the paper's boosted trees)
   - New: TabPFN (tabular foundation model)
-- **Datasets (4, locked 2026-11-16), 12,500 rows each (2026-11-26):** Adult (unbalanced, ~24.8% positive, as in the paper), Letter, Covertype, HIGGS (balanced 50/50) — see `03`
+- **Datasets (4, locked 2026-11-16), 12,500 rows each (2026-11-26):** all at natural class rates, as in the paper (Adult ~24.8% positive; Letter, Covertype, HIGGS near 50%) — see `03`
 - **Partitions:** 20/80, 50/50, 80/20 train/test
 - **Trials:** 3 random stratified splits per partition, results averaged
 - **Tuning:** 5-fold `GridSearchCV` on the training split only, **in every trial** (as the paper did, `05` #20).
@@ -48,7 +48,7 @@ Expect RF and boosting near the top, SVM sensitive to its settings, KNN mediocre
 
 | Rubric item | Points | How this project covers it |
 |-------------|--------|----------------------------|
-| Dataset size / challenge | 10 | 12,500 rows per dataset (`05` #19), drawn from large sources (Covertype 581k, HIGGS 11M); HIGGS is a hard problem; Adult kept imbalanced (`05` #21). ⚠️ Smaller than the earlier plan — see open question below |
+| Dataset size / challenge | 10 | 12,500 rows per dataset (`05` #19), drawn from large sources (Covertype 581k, HIGGS 11M); HIGGS is a hard problem; Adult imbalanced, natural rates throughout (`05` #23). ⚠️ Smaller than the earlier plan — see open question below |
 | Novelty | 10 | TabPFN, XGBoost vs. the 2006 results, accuracy-vs-speed tradeoff (not in the paper) |
 | Experimental design | 50 | Full 3×3 partition/trial grid, CV tuning in every trial, train/val/test reporting, hyperparameter plots, confusion matrices |
 | Report | 30 | Abstract, intro, data, methods, experiments, conclusion, references |

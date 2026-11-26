@@ -7,14 +7,13 @@
 | 10 | 2026-11-04 | Write per-job experiment script (01 Step 2) | Yes | Reads `data/processed/<name>.npz`; tunes every trial (05 #20); saves full `cv_results_` (rubric: accuracy curves vs. hyperparameters) and test confusion matrix; errors if a split exceeds `TRAIN_CAP`. Load TabPFN as v2 explicitly; set cuML RF `max_depth` explicitly. Include speed timing per 01 Step 2 (`TIMING_*` in config) |
 | 11 | 2026-11-04 | Write resumable runner (01 Step 3) | Yes | Skips jobs with existing results; jobs independent, any order (05 #20). Free-memory check no longer needed (shared server gone) |
 | 12 | 2026-11-04 | Run timing test (HIGGS 12.5k, all models, 80/20, 1 trial); record in 02 §2 | Yes — decides 5- vs 3-fold CV | 01 Step 4 |
-| 15 | 2026-11-04 | Finalize grids for XGBoost, ANN, KNN | Yes — full sweep | 03. MLP: early stopping, 6–8 combos (05 #17) |
+| 15 | 2026-11-04 | Finalize grids for XGBoost, ANN, KNN | Yes — full sweep | Proposed 2026-11-26 in 03 (05 #24); waiting on Tom's OK, incl. KNN → sklearn. MLP: early stopping, 6–8 combos (05 #17) |
 | 16 | 2026-11-04 | Run full 216-job sweep | Yes — results | |
 | 17 | 2026-11-04 | Aggregate results; fill 02 tables | Yes — report | |
 | 18 | 2026-11-04 | Make figures: bar charts, learning curves, heatmaps, rank plot | Yes — report | 04 Planned Comparisons |
-| 19 | 2026-11-04 | Choose report template | No | 04 Report |
 | 20 | 2026-11-04 | Write report incl. Bonus Points section + AI-use disclosure | Yes — submission | Due 11:59pm PST, Fri Dec 11, 2026 |
 | 28 | 2026-11-24 | Get DSMLP access (email datahub@ucsd.edu); request a Turing-or-newer GPU type | Yes — compute | 05 #13. Kaggle is the backup |
-| 29 | 2026-11-24 | Re-run `prepare_data.py` on the new platform (12.5k caps; Letter/Covertype/HIGGS 50/50, Adult unbalanced); record final rows for all 4 datasets in 02/03 | Yes — all runs | Old `data/` was on yggdrasil. Check Letter/Covertype/HIGGS come out 50.0% positive and Adult ~24.8%, all 12,500 rows |
+| 29 | 2026-11-24 | Re-run `prepare_data.py` on the new platform (12.5k caps, natural class rates); record final rows for all 4 datasets in 02/03 | Yes — all runs | Old `data/` was on yggdrasil. Check all 12,500 rows with rates ≈ Adult 24.8%, Letter 50.3%, Covertype 48.8%, HIGGS 53.0% |
 | 30 | 2026-11-24 | Rebuild the env on the new platform; check its GPU driver supports CUDA 13 (else use CUDA 12 builds) and re-record versions in 04 | Yes — all runs | Env was built for CUDA 13.0 / driver 580 on yggdrasil; cloud drivers may be older |
 | 31 | 2026-11-24 | Plan how results files get out of each Kaggle/Colab session (push to repo or save as dataset) | Yes — before sweep | 01 Step 3 |
 | 34 | 2026-11-26 | Decide on a scaling experiment for rubric item 1 (dataset size, 10 pts): larger Covertype/HIGGS samples for GPU models, reported separately from the main 12.5k study | No | 04 open question |
@@ -24,6 +23,7 @@
 ## Done
 | # | Added | Done | Item | Resolution |
 |---|-------|------|------|------------|
+| 19 | 2026-11-04 | 2026-11-26 | Choose report template | NeurIPS LaTeX |
 | 4 | 2026-11-04 | 2026-11-26 | Ask TA: is TabPFN OK? | Not asking — TabPFN is the project's novelty (05 #22) |
 | 5 | 2026-11-04 | 2026-11-26 | Ask TA: are per-model caps OK? | Moot — caps dropped (05 #19) |
 | 21 | 2026-11-04 | 2026-11-26 | Record exact due date | **11:59pm PST, Fri Dec 11, 2026** (from the assignment slides) |

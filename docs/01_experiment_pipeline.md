@@ -44,7 +44,7 @@ Job count: 6 classifiers × 4 datasets × 3 partitions × 3 trials = 216.
 | XGBoost | xgboost (`device="cuda"`, `tree_method="hist"`) | GPU |
 | SVM, RBF kernel | cuML `SVC` | GPU |
 | ANN (MLP) | PyTorch via skorch | GPU |
-| KNN | cuML | GPU |
+| KNN | cuML (proposed 2026-11-26: scikit-learn CPU, for distance weighting — `05` #24) | GPU |
 | TabPFN | tabpfn 10.0.0, **v2 weights** via `TabPFNClassifier.create_default_for_version(ModelVersion.V2)` (package default is 3.5, which needs a license token) | GPU |
 
 ---

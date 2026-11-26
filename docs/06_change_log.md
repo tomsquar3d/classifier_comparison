@@ -5,6 +5,13 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-26 — Session 6 (cont.)
+**Files changed:** `src/config.py`, README.md, `docs/01`–`07`, `docs/project-design.md`
+
+- Balancing switched off for all four datasets; every dataset keeps its natural class rate, as in the paper (`05` #23, reverses #18). (source: Tom's call this session)
+- Hyperparameter grids proposed from the paper's §2.1 in `03`, incl. moving KNN to scikit-learn for distance weighting (`05` #24). Pending Tom's OK.
+- Report template chosen: NeurIPS LaTeX (closes `07` #19).
+
 ## 2026-11-26 — Session 6
 **Files changed:** `src/config.py`, `src/prepare_data.py`, README.md, `docs/01`–`07`, `docs/project-design.md`
 
