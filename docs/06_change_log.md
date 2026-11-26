@@ -13,6 +13,7 @@ Append-only. Newest first. Never edit past entries — append corrections.
 - Report template chosen: NeurIPS LaTeX (closes `07` #19).
 - DSMLP working (closes `07` #28): RTX PRO 6000 Blackwell MIG slice, 24 GB, driver 580.126.20, CUDA 13.0. `prepare_data.py --only letter` ran in the container: 12,500 rows, 50.3% positive. New `src/smoke_test.py` fits all 6 models on random data on the GPU and prints versions.
 - Env rebuilt on DSMLP (closes `07` #30): same versions as yggdrasil; smoke test 6/6. Hit the home-folder quota during pip install; fixed by clearing conda/pip caches. Build steps in `04` Software.
+- Data prep run on DSMLP (closes `07` #29): all four at 12,500 rows, natural rates (02 §1). HIGGS save hit the home quota; fixed by moving the 2.6 GB raw file to `/tmp` (container-local) and symlinking it into `data/raw`.
 
 ## 2026-11-26 — Session 6
 **Files changed:** `src/config.py`, `src/prepare_data.py`, README.md, `docs/01`–`07`, `docs/project-design.md`

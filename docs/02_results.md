@@ -6,7 +6,7 @@
 
 ---
 
-## 🔵 STATUS — No model results yet; data prep must be re-run
+## 🔵 STATUS — Data prepped on DSMLP (2026-11-26); no model results yet
 
 Data prep ran on yggdrasil 2026-11-16 (§1), but every dataset is now capped at 12,500 rows with Adult left unbalanced (`05` #19, #21) and that server is gone, so `prepare_data.py` must be re-run on the new platform. No classifier has run. Every number in this doc must come from a results file or a script run — no estimates. Superseded numbers stay visible (version table or a note) when anything is re-run. Speed results (§6) added to the plan 2026-11-24.
 
@@ -20,20 +20,18 @@ Data prep ran on yggdrasil 2026-11-16 (§1), but every dataset is now capped at 
 
 ---
 
-## 1. Dataset summary (after prep)
+## 1. Dataset summary (after prep) — 🟢 run on DSMLP 2026-11-26
 
-> ⚠️ No dataset is rebalanced (`05` #23); each keeps its natural rate. Every dataset is capped at 12,500 rows (`05` #19). The table below is the 2026-11-16 run of the source data; final rows fill in after the re-run (action item #29).
+| Dataset | Rows used | Features (after encoding) | % positive | Majority-class baseline | Source rows |
+|---------|-----------|---------------------------|------------|-------------------------|-------------|
+| Adult | 12,500 | 104 | 24.78% | 75.22% | 45,222 (after dropping missing) |
+| Letter | 12,500 | 16 | 50.30% | 50.30% | 20,000 |
+| Covertype | 12,500 | 54 | 48.76% | 51.24% | 581,012 |
+| HIGGS | 12,500 | 28 | 52.96% | 52.96% | 199,190 (random read of the 11M file) |
 
-| Dataset | Rows (pre-balancing) | Features (after encoding) | % positive (pre-balancing) |
-|---------|-----------|---------------------------|------------|
-| Adult | 45,222 | 104 | 24.8% |
-| Letter | 20,000 | 16 | 50.3% |
-| Covertype | 581,012 | 54 | 48.8% |
-| HIGGS | 1,000,000 (2026-11-16 sample) | 28 | 53.0% |
-
-> Source: `data/processed/dataset_summary.json` from the 2026-11-16 yggdrasil run, as recorded in `03`. Planned use (2026-11-26): 12,500 rows each at natural rates; majority-class baselines Adult ~75.2%, Letter ~50.3%, Covertype ~51.2%, HIGGS ~53.0%. Final rows for all four: ⛔ NOT YET RECORDED until the re-run (action item #29).
+> Source: `data/processed/dataset_summary.json` from `src/prepare_data.py`, run on DSMLP 2026-11-26 (12.5k stratified cap, no rebalancing — `05` #19, #23). Training rows per partition: 2,500 / 6,250 / 10,000.
 >
-> Superseded planned sizes: 100k for Covertype/HIGGS (`05` #14) and 50/50 balancing (`05` #18), both replaced 2026-11-26 (`05` #19, #23).
+> Superseded: the 2026-11-16 yggdrasil run (Adult 45,222 / Letter 20,000 / Covertype 581,012 / HIGGS 1,000,000 used in full or at 100k), and the planned 100k caps and 50/50 balancing (`05` #14, #18).
 
 ## 2. Timing test
 
