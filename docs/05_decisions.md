@@ -151,9 +151,9 @@ Entries are permanent. If a decision is reversed, add a new entry pointing back 
 **Rationale:** Tom's call: leave natural rates. Matches the paper, which did not rebalance and reported %POZ per dataset. The three were already near 50/50, so balancing changed little and was one more thing to explain.
 **Impact:** Dataset table gets a "% positive" column and a majority-class baseline per dataset (Adult ~75.2%, Letter ~50.3%, Covertype ~51.2%, HIGGS ~53.0%).
 
-## 24. Hyperparameter grids proposed from the paper — 2026-11-26 (PROPOSED, pending Tom's OK)
+## 24. Hyperparameter grids from the paper — 2026-11-26 (approved by Tom same day)
 
 **Decision:** Grids in `03` "Hyperparameter grids", adapted from the paper's §2.1 to 12.5k-row data and 5-fold CV. Also proposed: KNN on scikit-learn (CPU) instead of cuML, because the paper used distance-weighted KNN and cuML's KNN classifier supports uniform weights only.
 **Rationale:** Tom asked for standard grids based on the paper.
-**Impact:** Closes #15 once approved; values then go into `src/config.py` for the experiment script.
+**Impact:** Closes `07` #15. Grids live in `src/config.py` (`GRIDS`, plus fixed settings `RF_*`, `XGB_*`, `ANN_*`); model setup in `src/models.py`.
 

@@ -1,6 +1,10 @@
 # Data and outputs (regenerate with the scripts; too big for git)
 data/
-results/
+# Real results ARE tracked (small JSON); test runs and logs are not
+results/smoke/
+results/cpu_test/
+results/logs/
+*.json.tmp
 *.npz
 *.gz
 

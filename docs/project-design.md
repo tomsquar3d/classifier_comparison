@@ -13,7 +13,7 @@ Replication + modernization of Caruana & Niculescu-Mizil (ICML 2006), "An Empiri
 | 2 | XGBoost | Modern version of paper's boosted trees | xgboost, `device="cuda", tree_method="hist"` | Replaced LightGBM (easier GPU) |
 | 3 | SVM, RBF kernel | Yes (#4 calibrated) | cuML SVC | Replaced AdaBoost; no training cap (largest split is 10k) |
 | 4 | ANN (MLP) | Yes | PyTorch via skorch | 1–3 hidden layers; **early stopping; grid of 6–8 combos** |
-| 5 | KNN | Yes | cuML (proposed: scikit-learn CPU, for the paper's distance weighting) | |
+| 5 | KNN | Yes | scikit-learn (CPU), for the paper's distance weighting | |
 | 6 | TabPFN | New (tabular foundation model) | tabpfn | No tuning; v2 open weights; 10k training-row limit, which the 80/20 split meets exactly. The project's novelty |
 
 Dropped: AdaBoost (no GPU, overlaps XGBoost), LightGBM (GPU build fiddly), RealMLP/TabM (overkill).
@@ -43,7 +43,7 @@ Every dataset is a **12,500-row** stratified, fixed-seed subsample taken once, b
 - Scale features for SVM, KNN, ANN (inside Pipeline); not for trees.
 - No per-model data differences. Document library differences (cuML vs sklearn).
 - Fallback if too slow after the timing test: 3-fold CV (document it).
-- **Grids (proposed 2026-11-26, from paper §2.1; full table in repo `docs/03`):** RF 1024 trees × max_features {1,2,4,6,8,12,16,20}; XGBoost n_estimators {32,128,512,2048} × max_depth {2,4,6,8}, lr 0.1; SVM gamma {0.001,0.005,0.01,0.05,0.1,0.5,1,2} × C {10⁻²…10³}; MLP {(32),(128),(128,128),(128,128,128)} × momentum {0.5,0.9}, early stopping; KNN K {1,3,5,9,15,25,45,75,125,201,351,501} × {uniform, distance}.
+- **Grids (approved 2026-11-26, from paper §2.1; `config.GRIDS`, full table in repo `docs/03`):** RF 1024 trees × max_features {1,2,4,6,8,12,16,20}; XGBoost n_estimators {32,128,512,2048} × max_depth {2,4,6,8}, lr 0.1; SVM gamma {0.001,0.005,0.01,0.05,0.1,0.5,1,2} × C {10⁻²…10³}; MLP {(32),(128),(128,128),(128,128,128)} × momentum {0.5,0.9}, early stopping; KNN K {1,3,5,9,15,25,45,75,125,201,351,501} × {uniform, distance}.
 - **Report:** NeurIPS LaTeX template.
 
 ## Infrastructure — updated 2026-11-24
@@ -66,6 +66,7 @@ Every dataset is a **12,500-row** stratified, fixed-seed subsample taken once, b
 - **Open (repo #34):** rubric item 1 gives 10 pts for "how challenging and large are the datasets". A separate, clearly labelled scaling run on larger Covertype/HIGGS samples could cover it without changing the main study.
 
 ## Change log
+- **2026-11-26 (code):** Grids approved. Experiment script (`src/run_job.py`) and resumable runner (`src/run_sweep.py`) written; tested on fake data in CPU mode. TabPFN gets 5-fold CV too, for a validation accuracy.
 - **2026-11-26 (rates, grids):** Balancing switched off; all datasets at natural class rates (decision #23). Grids proposed from the paper (#24). NeurIPS LaTeX template chosen.
 - **2026-11-26:** Every dataset capped at 12,500 rows; SVM cap dropped; TabPFN fits at 80/20 (decision #19). Tune in every trial, replacing trial-1-only tuning (#20). Adult left unbalanced, like the paper (#21). TA check-in dropped; TabPFN kept as the novelty (#22). Due date recorded.
 - **2026-11-24 (balancing):** All datasets balanced 50/50 by undersampling (decision #18). Adult shrinks to ~22.4k and no longer matches the paper's unbalanced Adult.

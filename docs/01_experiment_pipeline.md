@@ -44,7 +44,7 @@ Job count: 6 classifiers × 4 datasets × 3 partitions × 3 trials = 216.
 | XGBoost | xgboost (`device="cuda"`, `tree_method="hist"`) | GPU |
 | SVM, RBF kernel | cuML `SVC` | GPU |
 | ANN (MLP) | PyTorch via skorch | GPU |
-| KNN | cuML (proposed 2026-11-26: scikit-learn CPU, for distance weighting — `05` #24) | GPU |
+| KNN | scikit-learn (CPU), for the paper's distance weighting — `05` #24 | CPU |
 | TabPFN | tabpfn 10.0.0, **v2 weights** via `TabPFNClassifier.create_default_for_version(ModelVersion.V2)` (package default is 3.5, which needs a license token) | GPU |
 
 ---
@@ -58,14 +58,14 @@ Also pre-computes all 9 train/test splits (3 partitions × 3 trials, stratified,
 Code: `src/prepare_data.py` (settings in `src/config.py`). Run: `python src/prepare_data.py`.
 Output: `data/processed/<dataset>.npz` + `data/processed/dataset_summary.json`. Row counts in `03`.
 
-## Step 2: Per-job experiment script — 🔵 [NEW — 2026-11-04] [DRAFTED — not yet executed]
+## Step 2: Per-job experiment script — 🟠 [WRITTEN 2026-11-26 — tested on fake data, CPU mode; not yet run on GPU]
 
 Inputs: dataset, classifier, partition (0.2 / 0.5 / 0.8 train share), trial seed.
 
 1. Load the stored train/test indices for this partition and trial (from Step 1).
 2. No per-model caps (`05` #19). Check the training split is within `TRAIN_CAP` (TabPFN 10k) and stop with an error if not.
-3. Pipeline: scaler + model for SVM, KNN, ANN. No scaling for RF, XGBoost. TabPFN handles its own preprocessing.
-4. **Every trial** (`05` #20, 2026-11-26): `GridSearchCV(cv=5, scoring="accuracy", return_train_score=True, n_jobs=1)` on this trial's training split, then save the best params. TabPFN: no search.
+3. Pipeline: scaler + model for SVM, KNN, ANN. No scaling for RF, XGBoost. TabPFN handles its own preprocessing. Model setup in `src/models.py`.
+4. **Every trial** (`05` #20, 2026-11-26): `GridSearchCV(cv=5, scoring="accuracy", return_train_score=True, n_jobs=1)` on this trial's training split, then save the best params. TabPFN: one fixed setting, still put through the same 5-fold CV so it gets a validation accuracy. Folds: `StratifiedKFold(shuffle=True)` seeded per (partition, trial), so every model in a cell uses the same folds.
 5. Jobs don't depend on each other (trial-1-only tuning was dropped, `05` #20).
 6. Record train accuracy, validation accuracy (best CV score), test accuracy, best params, and the test confusion matrix (rubric welcomes confusion matrices).
 7. Measure speed (🟣 [NEW — 2026-11-24], see below).
@@ -81,7 +81,7 @@ Four numbers per job, all wall-clock seconds from `time.perf_counter()`. Setting
 
 | Field | What it times | How |
 |-------|---------------|-----|
-| `tune_time_s` | Whole grid search: every config × 5 folds, plus the refit | Timer around `GridSearchCV.fit`. Every job. TabPFN = 0 (no search) |
+| `tune_time_s` | Whole grid search: every config × 5 folds, plus the refit | Timer around `GridSearchCV.fit`. Every job. TabPFN: its 5 CV fits + refit (no search) |
 | `fit_time_s` | Training the final model once on the full training split | `GridSearchCV.refit_time_`. TabPFN: timer around `fit` |
 | `predict_ms_per_1k` | Prediction speed, normalized | Median of `TIMING_REPEATS` timed `predict` calls on a fixed `TIMING_N_ROWS`-row sample of the test split, ÷ rows × 1000 |
 | `predict_rows_per_s` | Same measurement as throughput | rows ÷ median time |
@@ -96,9 +96,11 @@ Rules:
 
 Accuracy still comes from one full `predict` on the whole test set. The timing sample is only for speed.
 
-Code: ⛔ NOT YET RECORDED (not written).
+Code: `src/run_job.py` (+ `src/models.py`). Run one job: `python src/run_job.py --dataset higgs --model xgboost --partition 80_20 --trial 1`. `--smoke` = one setting per grid + 2-fold CV, written to `results/smoke/`; `--device cpu` = CPU stand-ins for testing only, written to `results/cpu_test/`. Results are written to a temp file and renamed, so a cut-off job leaves no partial file. Each JSON holds: train / val (best CV) / test accuracy, val std, best params, test confusion matrix, full `cv_results_` (for accuracy-vs-hyperparameter plots), speed fields, GPU status, library versions.
 
-## Step 3: Resumable runner — 🟠 [REVISED — 2026-11-24] [DRAFTED — not yet executed]
+Tested 2026-11-26 in Claude's workspace on fake 12.5k-row data, CPU mode: smoke grids for RF, XGBoost, SVM, ANN, KNN; full grids for KNN (24 settings) and XGBoost (16 settings × 5 folds). TabPFN path not tested locally (not installed) — first checked on DSMLP.
+
+## Step 3: Resumable runner — 🟠 [WRITTEN 2026-11-26 — tested on fake data, CPU mode]
 
 Builds the 216-job list (4 datasets × 3 partitions × 3 trials × 6 models), runs them in any order (jobs are independent since `05` #20), and skips any job whose results file already exists. Cloud sessions get cut off (Kaggle: 12-h sessions, ~30 GPU-h/week; Colab limits not guaranteed), so a cut-off loses one job, not the sweep.
 
@@ -106,11 +108,11 @@ Kaggle: run as a batch "Save version" job; with 2× T4, two jobs can run at once
 
 Replaces the 2026-11-04 multi-GPU launcher design (8 shared L40S, free-memory checks), which no longer applies.
 
-Code: ⛔ NOT YET RECORDED (not written).
+Code: `src/run_sweep.py`. Each job runs in its own process (a crash or GPU memory leak can't kill the sweep); failures are listed at the end and retried by re-running the same command. Order is trial-major, so a partial sweep covers every cell once. Logs: `results/logs/<job>.log`. Shortcuts: `--timing-test` (HIGGS, 80/20, trial 1, all models), `--dry-run`, `--smoke`, and filters (`--datasets`, `--models`, `--partitions`, `--trials`). On DSMLP the results stay in the home folder between sessions; real results JSONs are tracked in git (test runs and logs are not).
 
 ## Step 4: Timing test — 🔵 [NEW — 2026-11-04] [DRAFTED — not yet executed]
 
-Run the worst case: HIGGS 12.5k, all 6 models, 80/20, 1 trial. Multiply each model's time by 36 for a sweep estimate (rough expectation from planning: 5–10 T4 GPU-hours — an estimate to check, not a measurement). Decide from it whether 5-fold CV fits or the 3-fold fallback is needed. Also a first check that the speed fields (Step 2) come out sensible.
+Run the worst case: `python src/run_sweep.py --timing-test` (HIGGS 12.5k, all 6 models, 80/20, 1 trial). Multiply each model's time by 36 for a sweep estimate (rough expectation from planning: 5–10 T4 GPU-hours — an estimate to check, not a measurement). Decide from it whether 5-fold CV fits or the 3-fold fallback is needed. Also a first check that the speed fields (Step 2) come out sensible.
 
 Result: ⛔ NOT YET RECORDED.
 

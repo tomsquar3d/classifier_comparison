@@ -1,13 +1,13 @@
 # Datasets & Hyperparameter Reference
 **Project:** COGS 118A Classifier Comparison
-**Version:** v5 — every dataset 12,500 rows at natural class rates; no per-model caps; grids proposed
+**Version:** v6 — every dataset 12,500 rows at natural class rates; no per-model caps; grids approved
 **Last Updated:** 2026-11-26
 
 ---
 
 ## 🔵 STATUS — Lineup and sizes set; grids not final
 
-Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). On 2026-11-26 every dataset was capped at 12,500 rows, per-model caps dropped and balancing switched off for all four (`05` #19, #21, #23). Grids proposed from the paper (`05` #24), pending Tom's OK. Data prep not yet re-run.
+Dataset lineup and Letter rule locked 2026-11-16 (`05` #7–8). On 2026-11-26 every dataset was capped at 12,500 rows, per-model caps dropped and balancing switched off for all four (`05` #19, #21, #23). Grids approved (`05` #24). Data prepped on DSMLP 2026-11-26 (`02` §1).
 
 ---
 
@@ -51,7 +51,7 @@ Prediction speed is timed on a random 2,500-row sample of each test split (= the
 
 ---
 
-## Hyperparameter grids — PROPOSED 2026-11-26, pending Tom's OK (`05` #24)
+## Hyperparameter grids — approved 2026-11-26 (`05` #24); in `src/config.py` `GRIDS`
 
 Tuning runs in every trial, on that trial's own training split (`05` #20), 5-fold CV (3-fold fallback if the timing test says it's too slow). Each grid starts from the paper's §2.1 settings, trimmed where the paper's range is wasteful at 12.5k rows.
 
@@ -62,6 +62,6 @@ Tuning runs in every trial, on that trial's own training split (`05` #20), 5-fol
 | SVM (RBF) | RBF width {0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2}; C from 10⁻⁷ to 10³ by ×10 (plus linear/poly kernels) | `gamma` ∈ the paper's 8 widths × `C` ∈ {10⁻², 10⁻¹, …, 10³}. RBF only (the assignment counts other kernels as the same classifier); C below 10⁻² dropped because it only underfits | 48 |
 | ANN (MLP) | 1 hidden layer, {1, 2, 4, 8, 32, 128} units; momentum {0, 0.2, 0.5, 0.9}; early stopping on validation | Hidden layers ∈ {(32), (128), (128, 128), (128, 128, 128)} × SGD momentum ∈ {0.5, 0.9}; learning rate 0.01; early stopping on a 10% slice of the training fold (patience 10, max 200 epochs). Deeper nets follow the assignment's tip to try up to 3 layers | 8 |
 | KNN | 26 values of K from 1 to the training-set size; Euclidean; also distance-weighted | `n_neighbors` ∈ {1, 3, 5, 9, 15, 25, 45, 75, 125, 201, 351, 501} × `weights` ∈ {uniform, distance}; Euclidean. **Proposed switch to scikit-learn (CPU)**: cuML's KNN classifier only supports uniform weights, and sklearn is fast at this size | 24 |
-| TabPFN | — (not in paper) | No tuning | 1 |
+| TabPFN | — (not in paper) | No tuning; still run through the same 5-fold CV so it gets a validation accuracy | 1 |
 
 Features scaled to mean 0, std 1 for SVM, ANN and KNN, as in the paper.

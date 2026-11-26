@@ -93,3 +93,44 @@ TIMING_N_ROWS = 2_500    # test rows used for the prediction-speed measurement
                          # (= smallest test split, 80/20 of 12.5k)
 TIMING_REPEATS = 5       # timed repeats; report the median
 TIMING_WARMUP = 1        # untimed warm-up calls first (GPU start-up cost)
+
+# ---------------------------------------------------------------- models
+# Order used by the runner and in tables.
+MODELS = ["rf", "xgboost", "svm", "ann", "knn", "tabpfn"]
+
+# Hyperparameter grids — approved 2026-11-26 (decision #24), adapted from the
+# paper's section 2.1. Keys are the parameter names inside each model's
+# pipeline (see src/models.py). TabPFN is not tuned (one fixed setting, still
+# cross-validated so it gets a validation accuracy like the others).
+GRIDS = {
+    "rf": {   # 1024 trees fixed; values above the feature count are dropped
+        "max_features": [1, 2, 4, 6, 8, 12, 16, 20],
+    },
+    "xgboost": {   # learning_rate fixed at 0.1
+        "n_estimators": [32, 128, 512, 2048],
+        "max_depth": [2, 4, 6, 8],
+    },
+    "svm": {   # RBF only; gamma = the paper's 8 kernel widths
+        "svc__C": [1e-2, 1e-1, 1e0, 1e1, 1e2, 1e3],
+        "svc__gamma": [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2],
+    },
+    "ann": {   # SGD, lr 0.01, early stopping (see ANN_* below)
+        "net__module__hidden": [(32,), (128,), (128, 128), (128, 128, 128)],
+        "net__optimizer__momentum": [0.5, 0.9],
+    },
+    "knn": {   # scikit-learn, Euclidean distance
+        "knn__n_neighbors": [1, 3, 5, 9, 15, 25, 45, 75, 125, 201, 351, 501],
+        "knn__weights": ["uniform", "distance"],
+    },
+    "tabpfn": {},
+}
+
+# Fixed settings (not tuned)
+RF_N_TREES = 1024           # paper: 1024
+RF_MAX_DEPTH = 32           # set explicitly: cuML's default changes in 26.08
+XGB_LEARNING_RATE = 0.1
+ANN_LR = 0.01
+ANN_MAX_EPOCHS = 200
+ANN_PATIENCE = 10           # early stopping on validation loss
+ANN_VALID_FRAC = 0.1        # slice of each training fold used for early stopping
+ANN_BATCH_SIZE = 128

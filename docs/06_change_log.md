@@ -5,6 +5,14 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-26 — Session 6 (cont. 2)
+**Files changed:** `src/config.py`, new `src/models.py`, `src/run_job.py`, `src/run_sweep.py`, `.gitignore`, `docs/01`, `03`, `05`, `07`, `docs/project-design.md`
+
+- Grids approved by Tom (`05` #24); added to `config.GRIDS` with fixed settings (`RF_N_TREES`, `RF_MAX_DEPTH`, `XGB_LEARNING_RATE`, `ANN_*`).
+- New experiment script `run_job.py` and resumable runner `run_sweep.py` (closes `07` #10, #11, #15, #31). TabPFN goes through the same 5-fold CV (one setting) so it has a validation accuracy.
+- Tested in Claude's workspace on fake data, CPU mode only (see `01` Steps 2–3). Not yet run on the GPU.
+- `.gitignore`: real `results/*.json` now tracked; smoke/CPU-test runs and logs are not.
+
 ## 2026-11-26 — Session 6 (cont.)
 **Files changed:** `src/config.py`, README.md, `docs/01`–`07`, `docs/project-design.md`
 

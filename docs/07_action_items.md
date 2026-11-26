@@ -4,15 +4,11 @@
 ## Open
 | # | Added | Item | Blocking? | Notes |
 |---|-------|------|-----------|-------|
-| 10 | 2026-11-04 | Write per-job experiment script (01 Step 2) | Yes | Reads `data/processed/<name>.npz`; tunes every trial (05 #20); saves full `cv_results_` (rubric: accuracy curves vs. hyperparameters) and test confusion matrix; errors if a split exceeds `TRAIN_CAP`. Load TabPFN as v2 explicitly; set cuML RF `max_depth` explicitly. Include speed timing per 01 Step 2 (`TIMING_*` in config) |
-| 11 | 2026-11-04 | Write resumable runner (01 Step 3) | Yes | Skips jobs with existing results; jobs independent, any order (05 #20). Free-memory check no longer needed (shared server gone) |
-| 12 | 2026-11-04 | Run timing test (HIGGS 12.5k, all models, 80/20, 1 trial); record in 02 §2 | Yes — decides 5- vs 3-fold CV | 01 Step 4 |
-| 15 | 2026-11-04 | Finalize grids for XGBoost, ANN, KNN | Yes — full sweep | Proposed 2026-11-26 in 03 (05 #24); waiting on Tom's OK, incl. KNN → sklearn. MLP: early stopping, 6–8 combos (05 #17) |
+| 12 | 2026-11-04 | Run timing test: `python src/run_sweep.py --timing-test` (HIGGS 12.5k, all models, 80/20, 1 trial); record in 02 §2 | Yes — decides 5- vs 3-fold CV | 01 Step 4 |
 | 16 | 2026-11-04 | Run full 216-job sweep | Yes — results | |
 | 17 | 2026-11-04 | Aggregate results; fill 02 tables | Yes — report | |
 | 18 | 2026-11-04 | Make figures: bar charts, learning curves, heatmaps, rank plot | Yes — report | 04 Planned Comparisons |
 | 20 | 2026-11-04 | Write report incl. Bonus Points section + AI-use disclosure | Yes — submission | Due 11:59pm PST, Fri Dec 11, 2026 |
-| 31 | 2026-11-24 | Plan how results files get out of each Kaggle/Colab session (push to repo or save as dataset) | Yes — before sweep | 01 Step 3 |
 | 34 | 2026-11-26 | Decide on a scaling experiment for rubric item 1 (dataset size, 10 pts): larger Covertype/HIGGS samples for GPU models, reported separately from the main 12.5k study | No | 04 open question |
 | 25 | 2026-11-24 | Make speed table + accuracy-vs-speed figures | No — bonus | 02 §6, 04 Speed vs. accuracy |
 | 26 | 2026-11-24 | If sweep timings are too noisy or came from mixed GPU types, run a short timing-only pass on one GPU type | No | Decide after the sweep |
@@ -20,6 +16,10 @@
 ## Done
 | # | Added | Done | Item | Resolution |
 |---|-------|------|------|------------|
+| 10 | 2026-11-04 | 2026-11-26 | Write per-job experiment script | `src/run_job.py` + `src/models.py`; tested on fake data, CPU mode (01 Step 2) |
+| 11 | 2026-11-04 | 2026-11-26 | Write resumable runner | `src/run_sweep.py`; tested incl. skip-if-done (01 Step 3) |
+| 15 | 2026-11-04 | 2026-11-26 | Finalize grids | Approved by Tom; in `config.GRIDS` (05 #24) |
+| 31 | 2026-11-24 | 2026-11-26 | Plan how results leave each session | DSMLP home folder persists, so results stay put; real results JSONs now tracked in git |
 | 29 | 2026-11-24 | 2026-11-26 | Re-run `prepare_data.py` on new platform | Done on DSMLP: all 12,500 rows; Adult 24.78%, Letter 50.30%, Covertype 48.76%, HIGGS 52.96% (02 §1). HIGGS raw file staged in `/tmp` to stay under the home quota |
 | 30 | 2026-11-24 | 2026-11-26 | Rebuild env on new platform | Built on DSMLP at `~/envs/cogs118a`, same versions as before; smoke test 6/6 (04 Software) |
 | 28 | 2026-11-24 | 2026-11-26 | Get DSMLP access | Tom already had access. Launch: `launch-scipy-ml.sh -g 1 -c 4 -m 16 -l gpu-class=medium` → RTX PRO 6000 Blackwell **MIG slice** (24 GB, 46 SMs), driver 580.126.20, CUDA 13.0. Letter data prep ran OK in the container |
