@@ -133,4 +133,6 @@ ANN_LR = 0.01
 ANN_MAX_EPOCHS = 200
 ANN_PATIENCE = 10           # early stopping on validation loss
 ANN_VALID_FRAC = 0.1        # slice of each training fold used for early stopping
-ANN_BATCH_SIZE = 128
+ANN_BATCH_SIZE = 128        # training mini-batch
+ANN_PREDICT_BATCH_SIZE = 4096  # prediction only: avoids per-batch overhead
+                               # skewing the speed comparison; no effect on accuracy

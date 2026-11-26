@@ -5,6 +5,13 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-26 — Session 6 (cont. 3)
+**Files changed:** `src/config.py`, `src/models.py`, new `src/ann_check.py`, `docs/02`, `07`
+
+- Smoke sweep passed 6/6 on DSMLP GPU (incl. TabPFN). Timing test run (closes `07` #12): 15m17s; keep 5-fold CV; results in `02` §2.
+- ANN undertrained (train acc 0.70, smallest net best). New diagnostic `src/ann_check.py` (tested on fake data, CPU); added `07` #35.
+- `ANN_PREDICT_BATCH_SIZE = 4096` for prediction (speed fairness; no accuracy effect).
+
 ## 2026-11-26 — Session 6 (cont. 2)
 **Files changed:** `src/config.py`, new `src/models.py`, `src/run_job.py`, `src/run_sweep.py`, `.gitignore`, `docs/01`, `03`, `05`, `07`, `docs/project-design.md`
 

@@ -4,7 +4,7 @@
 ## Open
 | # | Added | Item | Blocking? | Notes |
 |---|-------|------|-----------|-------|
-| 12 | 2026-11-04 | Run timing test: `python src/run_sweep.py --timing-test` (HIGGS 12.5k, all models, 80/20, 1 trial); record in 02 §2 | Yes — decides 5- vs 3-fold CV | 01 Step 4 |
+| 35 | 2026-11-26 | Fix ANN undertraining: run `src/ann_check.py` on DSMLP, pick lr / patience / optimizer, update `config.ANN_*`, re-run ANN timing job | Yes — full sweep | 02 §2 |
 | 16 | 2026-11-04 | Run full 216-job sweep | Yes — results | |
 | 17 | 2026-11-04 | Aggregate results; fill 02 tables | Yes — report | |
 | 18 | 2026-11-04 | Make figures: bar charts, learning curves, heatmaps, rank plot | Yes — report | 04 Planned Comparisons |
@@ -16,6 +16,7 @@
 ## Done
 | # | Added | Done | Item | Resolution |
 |---|-------|------|------|------------|
+| 12 | 2026-11-04 | 2026-11-26 | Run timing test | 15m17s for HIGGS 80/20, all 6 models; keep 5-fold CV; sweep ~5–6 h (≤9.2 h). ANN undertrained → #35 (02 §2) |
 | 10 | 2026-11-04 | 2026-11-26 | Write per-job experiment script | `src/run_job.py` + `src/models.py`; tested on fake data, CPU mode (01 Step 2) |
 | 11 | 2026-11-04 | 2026-11-26 | Write resumable runner | `src/run_sweep.py`; tested incl. skip-if-done (01 Step 3) |
 | 15 | 2026-11-04 | 2026-11-26 | Finalize grids | Approved by Tom; in `config.GRIDS` (05 #24) |

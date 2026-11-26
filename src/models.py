@@ -90,6 +90,7 @@ def _ann(n_features, device, seed):
                                  patience=C.ANN_PATIENCE, load_best=True)],
         device="cuda" if device == "gpu" else "cpu",
         iterator_train__shuffle=True,
+        iterator_valid__batch_size=C.ANN_PREDICT_BATCH_SIZE,
         verbose=0,
     )
     return _scaled("net", net), dict(C.GRIDS["ann"])
