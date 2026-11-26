@@ -4,9 +4,9 @@
 ## Open
 | # | Added | Item | Blocking? | Notes |
 |---|-------|------|-----------|-------|
-| 16 | 2026-11-04 | Run full 216-job sweep | Yes — results | In tmux on the login node; `--trials 1`, then 2, then 3 |
-| 17 | 2026-11-04 | Aggregate results; fill 02 tables | Yes — report | |
-| 18 | 2026-11-04 | Make figures: bar charts, learning curves, heatmaps, rank plot | Yes — report | 04 Planned Comparisons |
+| 16 | 2026-11-04 | Run full 216-job sweep | Yes — results | Trial 1 done 2026-11-26 (72/72, in git). Trials 2–3 next (`--trials 2`, `--trials 3`). Copy results back: `tar` on DSMLP → `scp` → upload |
+| 17 | 2026-11-04 | Aggregate results; fill 02 tables | Yes — report | `src/aggregate.py` written; trial-1 tables in 02 §3. Re-run after trials 2–3 |
+| 18 | 2026-11-04 | Make figures: bar charts, learning curves, heatmaps, rank plot | Yes — report | 6 figures from `src/aggregate.py` (trial 1). Still to add: significance test (Friedman / critical difference) once 3 trials exist |
 | 20 | 2026-11-04 | Write report incl. Bonus Points section + AI-use disclosure | Yes — submission | Due 11:59pm PST, Fri Dec 11, 2026 |
 | 34 | 2026-11-26 | Decide on a scaling experiment for rubric item 1 (dataset size, 10 pts): larger Covertype/HIGGS samples for GPU models, reported separately from the main 12.5k study | No | 04 open question |
 | 25 | 2026-11-24 | Make speed table + accuracy-vs-speed figures | No — bonus | 02 §6, 04 Speed vs. accuracy |

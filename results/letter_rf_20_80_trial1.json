@@ -1,0 +1,209 @@
+{
+ "dataset": "letter",
+ "model": "rf",
+ "partition": "20_80",
+ "trial": 1,
+ "train_frac": 0.2,
+ "n_train": 2500,
+ "n_test": 10000,
+ "n_features": 16,
+ "train_positive_rate": 0.5032,
+ "test_positive_rate": 0.503,
+ "test_majority_baseline": 0.503,
+ "cv_folds": 5,
+ "n_settings": 7,
+ "smoke": false,
+ "device": "gpu",
+ "seed": 118000,
+ "best_params": {
+  "max_features": 4
+ },
+ "train_acc": 1.0,
+ "val_acc": 0.9192,
+ "val_acc_std": 0.013775340286178026,
+ "cv_train_acc": 1.0,
+ "test_acc": 0.921,
+ "confusion_matrix": {
+  "labels": [
+   0,
+   1
+  ],
+  "rows_true_cols_pred": [
+   [
+    4553,
+    417
+   ],
+   [
+    373,
+    4657
+   ]
+  ]
+ },
+ "tune_time_s": 60.07173369638622,
+ "fit_time_s": 1.5995619297027588,
+ "predict_rows": 2500,
+ "predict_times_s": [
+  0.001116391271352768,
+  0.0011036433279514313,
+  0.0010970328003168106,
+  0.001098664477467537,
+  0.0010958537459373474
+ ],
+ "predict_median_s": 0.001098664477467537,
+ "predict_ms_per_1k": 0.43946579098701477,
+ "predict_rows_per_s": 2275489.97102609,
+ "cv_results": {
+  "params": [
+   {
+    "max_features": 1
+   },
+   {
+    "max_features": 2
+   },
+   {
+    "max_features": 4
+   },
+   {
+    "max_features": 6
+   },
+   {
+    "max_features": 8
+   },
+   {
+    "max_features": 12
+   },
+   {
+    "max_features": 16
+   }
+  ],
+  "mean_train_score": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ],
+  "std_train_score": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "mean_test_score": [
+   0.906,
+   0.9184000000000001,
+   0.9192,
+   0.9179999999999999,
+   0.9172,
+   0.9156000000000001,
+   0.9128000000000001
+  ],
+  "std_test_score": [
+   0.01564608577248637,
+   0.012800000000000011,
+   0.013775340286178026,
+   0.011242775458044165,
+   0.01092520022699814,
+   0.011482160075525868,
+   0.011906300852909784
+  ],
+  "rank_test_score": [
+   7,
+   2,
+   1,
+   3,
+   4,
+   5,
+   6
+  ],
+  "mean_fit_time": [
+   1.4785572052001954,
+   1.4473549365997314,
+   1.5238251686096191,
+   1.5570465564727782,
+   1.5280975341796874,
+   1.5676104068756103,
+   1.5134257316589355
+  ],
+  "mean_score_time": [
+   0.21161928176879882,
+   0.1684051513671875,
+   0.14011478424072266,
+   0.1508962631225586,
+   0.12862091064453124,
+   0.13622164726257324,
+   0.12268013954162597
+  ],
+  "split0_test_score": [
+   0.892,
+   0.908,
+   0.906,
+   0.912,
+   0.908,
+   0.908,
+   0.912
+  ],
+  "split1_test_score": [
+   0.898,
+   0.91,
+   0.912,
+   0.91,
+   0.912,
+   0.904,
+   0.9
+  ],
+  "split2_test_score": [
+   0.934,
+   0.934,
+   0.942,
+   0.936,
+   0.934,
+   0.934,
+   0.93
+  ],
+  "split3_test_score": [
+   0.912,
+   0.934,
+   0.928,
+   0.926,
+   0.926,
+   0.924,
+   0.922
+  ],
+  "split4_test_score": [
+   0.894,
+   0.906,
+   0.908,
+   0.906,
+   0.906,
+   0.908,
+   0.9
+  ]
+ },
+ "gpu_at_start": {
+  "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+  "index": "0",
+  "memory_free_mib": "[Insufficient Permissions]",
+  "memory_total_mib": "[Insufficient Permissions]",
+  "utilization_pct": "[N/A]",
+  "driver": "580.126.20"
+ },
+ "versions": {
+  "python": "3.11.18",
+  "numpy": "2.4.6",
+  "sklearn": "1.9.1",
+  "cuml": "26.06.00",
+  "xgboost": "3.2.0",
+  "torch": "2.14.1+cu130",
+  "skorch": "1.4.0",
+  "tabpfn": "10.0.0"
+ },
+ "host": "tot013-607132",
+ "started": "2026-11-26T11:32:04-08:00",
+ "job_wall_time_s": 62.0266153588891
+}

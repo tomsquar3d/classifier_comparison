@@ -5,6 +5,13 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-26 — Session 6 (cont. 4)
+**Files changed:** new `src/aggregate.py`, `results/*_trial1.json` (72), `results/summary/`, `figures/`, `docs/02`, `07`
+
+- Trial 1 sweep finished on DSMLP: 72/72 jobs, all on one GPU type. Results copied back via tar/scp and committed.
+- New `src/aggregate.py`: main table (train/val/test mean ± std), ranks, speed table, and 6 figures (accuracy vs training share, rank table, SVM C×gamma heatmaps, KNN curves, accuracy vs speed, Adult confusion matrices). Palette validated with the dataviz validator (6 categorical slots, light mode).
+- `02` §3: interim trial-1 tables and observations.
+
 ## 2026-11-26 — Session 6 (cont. 3)
 **Files changed:** `src/config.py`, `src/models.py`, new `src/ann_check.py`, `docs/02`, `07`
 

@@ -1,0 +1,115 @@
+{
+ "dataset": "adult",
+ "model": "tabpfn",
+ "partition": "80_20",
+ "trial": 1,
+ "train_frac": 0.8,
+ "n_train": 10000,
+ "n_test": 2500,
+ "n_features": 104,
+ "train_positive_rate": 0.2478,
+ "test_positive_rate": 0.248,
+ "test_majority_baseline": 0.752,
+ "cv_folds": 5,
+ "n_settings": 1,
+ "smoke": false,
+ "device": "gpu",
+ "seed": 118020,
+ "best_params": {},
+ "train_acc": 0.8681,
+ "val_acc": 0.8572000000000001,
+ "val_acc_std": 0.006816157275180809,
+ "cv_train_acc": 0.8692499999999999,
+ "test_acc": 0.8692,
+ "confusion_matrix": {
+  "labels": [
+   0,
+   1
+  ],
+  "rows_true_cols_pred": [
+   [
+    1792,
+    88
+   ],
+   [
+    239,
+    381
+   ]
+  ]
+ },
+ "tune_time_s": 182.42809275351465,
+ "fit_time_s": 5.828020334243774,
+ "predict_rows": 2500,
+ "predict_times_s": [
+  15.999291127547622,
+  16.218887576833367,
+  16.19655300490558,
+  16.302896101027727,
+  16.188164114952087
+ ],
+ "predict_median_s": 16.19655300490558,
+ "predict_ms_per_1k": 6478.6212019622335,
+ "predict_rows_per_s": 154.35383067266255,
+ "cv_results": {
+  "params": [
+   {}
+  ],
+  "mean_train_score": [
+   0.8692499999999999
+  ],
+  "std_train_score": [
+   0.002112463017427761
+  ],
+  "mean_test_score": [
+   0.8572000000000001
+  ],
+  "std_test_score": [
+   0.006816157275180809
+  ],
+  "rank_test_score": [
+   1
+  ],
+  "mean_fit_time": [
+   5.697939491271972
+  ],
+  "mean_score_time": [
+   12.093602991104126
+  ],
+  "split0_test_score": [
+   0.8695
+  ],
+  "split1_test_score": [
+   0.8535
+  ],
+  "split2_test_score": [
+   0.849
+  ],
+  "split3_test_score": [
+   0.857
+  ],
+  "split4_test_score": [
+   0.857
+  ]
+ },
+ "gpu_at_start": {
+  "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+  "index": "0",
+  "memory_free_mib": "[Insufficient Permissions]",
+  "memory_total_mib": "[Insufficient Permissions]",
+  "utilization_pct": "[N/A]",
+  "driver": "580.126.20"
+ },
+ "versions": {
+  "python": "3.11.18",
+  "numpy": "2.4.6",
+  "sklearn": "1.9.1",
+  "cuml": "26.06.00",
+  "xgboost": "3.2.0",
+  "torch": "2.14.1+cu130",
+  "skorch": "1.4.0",
+  "tabpfn": "10.0.0"
+ },
+ "host": "tot013-607132",
+ "started": "2026-11-26T11:26:38-08:00",
+ "job_wall_time_s": 321.6685245577246
+}
