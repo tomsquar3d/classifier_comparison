@@ -5,6 +5,12 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-26 — Session 6 (cont. 6)
+**Files changed:** `src/aggregate.py`, `results/summary/all_metrics.csv`, `results/summary/rankings.csv`
+
+- New combined tables: `all_metrics.csv` (one row per dataset × partition × model: train/val/test mean ± std, majority baseline, rank in cell, tune/fit/predict time, best params per trial) and `rankings.csv` (per model: mean rank overall / by dataset / by partition, cells won, mean test accuracy, bootstrap rank probabilities). Also put in a Claude Sheet for Tom.
+- Branch `replan-12k-cap` fast-forwarded into `main`.
+
 ## 2026-11-26 — Session 6 (cont. 5)
 **Files changed:** `results/*_trial{2,3}.json` (144), `results/summary/`, `figures/`, `src/aggregate.py`, `docs/02`, `07`
 

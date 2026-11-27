@@ -22,6 +22,11 @@ Outputs
   figures/fig8_critical_difference.{png,pdf}       Friedman + Nemenyi CD diagram
   results/summary/significance.json   Friedman test, Nemenyi CD, mean ranks
   results/summary/bootstrap_ranks.csv P(model finishes 1st..6th), bootstrap
+  results/summary/all_metrics.csv     one row per dataset x partition x model:
+                                      every metric, rank in its cell, best params
+  results/summary/rankings.csv        one row per model: mean rank overall, by
+                                      dataset and by partition, cells won,
+                                      bootstrap rank probabilities
 
 Usage:
     python src/aggregate.py
@@ -488,6 +493,55 @@ def fig8_cd(sig: dict) -> None:
     save(fig, "fig8_critical_difference")
 
 
+# ---------------------------------------------------------------- export
+def export_tables(df: pd.DataFrame, raw: list[dict]) -> None:
+    """Readable all-metrics and rankings tables (display names, one CSV each)."""
+    g = df.groupby(["dataset", "partition", "model"], observed=True)
+    t = g.agg(n_train=("n_train", "first"),
+              baseline=("test_majority_baseline", "mean"),
+              train_mean=("train_acc", "mean"), train_std=("train_acc", "std"),
+              val_mean=("val_acc", "mean"), val_std=("val_acc", "std"),
+              test_mean=("test_acc", "mean"), test_std=("test_acc", "std"),
+              tune_s=("tune_time_s", "median"), fit_s=("fit_time_s", "median"),
+              predict_ms_per_1k=("predict_ms_per_1k", "median")).reset_index()
+    t["rank"] = t.groupby(["dataset", "partition"], observed=True)["test_mean"].rank(
+        ascending=False, method="average")
+    bp = (df.sort_values("trial").groupby(["dataset", "partition", "model"], observed=True)
+          ["best_params"].apply(list).reset_index())
+    for i in range(int(df.trial.max())):
+        bp[f"best_params_trial{i + 1}"] = bp.best_params.str[i]
+    t = t.merge(bp.drop(columns="best_params"), on=["dataset", "partition", "model"])
+    t = t.sort_values(["dataset", "partition", "rank"])
+    out = t.copy()
+    out["dataset"] = out.dataset.map(lambda d: DATASET_LABELS[d].split(" (")[0])
+    out["partition"] = out.partition.map(PART_LABELS)
+    out["model"] = out.model.map(MODEL_LABELS)
+    out.to_csv(SUMMARY_DIR / "all_metrics.csv", index=False, float_format="%.4f")
+
+    r = t[["dataset", "partition", "model", "rank"]]
+    rk = pd.DataFrame({
+        "mean_rank": r.groupby("model", observed=True)["rank"].mean(),
+        "cells_won": r[r["rank"] == 1].groupby("model", observed=True).size(),
+        "mean_test_acc": df.groupby("model", observed=True).test_acc.mean(),
+    }).reindex(C.MODELS)
+    rk["cells_won"] = rk.cells_won.fillna(0).astype(int)
+    for col, labels in (("dataset", {d: DATASET_LABELS[d].split(" (")[0] for d in C.DATASETS}),
+                        ("partition", PART_LABELS)):
+        piv = r.pivot_table(index="model", columns=col, values="rank", observed=True)
+        for k, lab in labels.items():
+            rk[f"mean_rank_{lab}"] = piv[k]
+    bs_path = SUMMARY_DIR / "bootstrap_ranks.csv"
+    if bs_path.exists():
+        bs = pd.read_csv(bs_path, index_col=0)
+        for c in bs.columns:
+            rk[f"bootstrap_P_{c}" if c != "expected_rank" else "bootstrap_expected_rank"] = bs[c]
+    rk = rk.sort_values("mean_rank")
+    rk.index = rk.index.map(MODEL_LABELS)
+    rk.index.name = "model"
+    rk.to_csv(SUMMARY_DIR / "rankings.csv", float_format="%.4f")
+    print("  results/summary/all_metrics.csv, rankings.csv")
+
+
 # ---------------------------------------------------------------- main
 def main() -> None:
     df, raw = load()
@@ -522,6 +576,7 @@ def main() -> None:
         print(probs.round(3).to_string())
         fig7_bootstrap(probs)
         fig8_cd(sig)
+    export_tables(df, raw)
 
 
 if __name__ == "__main__":
