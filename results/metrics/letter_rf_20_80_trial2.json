@@ -1,0 +1,21 @@
+{
+ "dataset": "letter",
+ "model": "rf",
+ "partition": "20_80",
+ "trial": 2,
+ "best_params": {
+  "max_features": 4
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.9275,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 1.5455944649875164,
+ "score_time_s": 0.16879218444228172,
+ "roc_auc": 0.9850163405882612,
+ "apr": 0.9855653678282668,
+ "bep": 0.9300198807157057,
+ "lift": 1.9880715705765408,
+ "rms": 0.2546428634076083,
+ "mxe": 0.2310637009021309,
+ "acc_refit": 0.9275
+}

@@ -1,0 +1,25 @@
+{
+ "dataset": "adult",
+ "model": "ann",
+ "partition": "20_80",
+ "trial": 1,
+ "best_params": {
+  "net__module__hidden": [
+   128,
+   128
+  ],
+  "net__optimizer__momentum": 0.9
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.8343,
+ "acc_refit_diff": -0.000300000000000078,
+ "refit_time_s": 2.9491511341184378,
+ "score_time_s": 0.24252257868647575,
+ "roc_auc": 0.883774235339587,
+ "apr": 0.7159577870320207,
+ "bep": 0.6533494753833737,
+ "lift": 2.624697336561743,
+ "rms": 0.33866611345897357,
+ "mxe": 0.3597159909032027,
+ "acc_refit": 0.834
+}

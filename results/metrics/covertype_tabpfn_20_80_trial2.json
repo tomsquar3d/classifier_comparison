@@ -1,0 +1,19 @@
+{
+ "dataset": "covertype",
+ "model": "tabpfn",
+ "partition": "20_80",
+ "trial": 2,
+ "best_params": {},
+ "score_source": "predict_proba",
+ "acc_sweep": 0.8214,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 1.1603982858359814,
+ "score_time_s": 5.922588255256414,
+ "roc_auc": 0.8955647281303892,
+ "apr": 0.8801330497052867,
+ "bep": 0.8105004101722724,
+ "lift": 1.849056603773585,
+ "rms": 0.359816413735043,
+ "mxe": 0.40482456064198113,
+ "acc_refit": 0.8214
+}

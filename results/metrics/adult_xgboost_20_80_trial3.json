@@ -1,0 +1,22 @@
+{
+ "dataset": "adult",
+ "model": "xgboost",
+ "partition": "20_80",
+ "trial": 3,
+ "best_params": {
+  "max_depth": 4,
+  "n_estimators": 128
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.856,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.100496307015419,
+ "score_time_s": 0.01757841184735298,
+ "roc_auc": 0.9100773861295539,
+ "apr": 0.8001395936040965,
+ "bep": 0.695318805488297,
+ "lift": 2.8022598870056497,
+ "rms": 0.3157926860681544,
+ "mxe": 0.3128365545757811,
+ "acc_refit": 0.856
+}

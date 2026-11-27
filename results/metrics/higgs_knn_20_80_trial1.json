@@ -1,0 +1,22 @@
+{
+ "dataset": "higgs",
+ "model": "knn",
+ "partition": "20_80",
+ "trial": 1,
+ "best_params": {
+  "knn__n_neighbors": 25,
+  "knn__weights": "uniform"
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.5947,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.0021133385598659515,
+ "score_time_s": 0.07564530149102211,
+ "roc_auc": 0.6311737969356928,
+ "apr": 0.6315139682345501,
+ "bep": 0.6157477341389728,
+ "lift": 1.256797583081571,
+ "rms": 0.48540671606396213,
+ "mxe": 0.6635208744397089,
+ "acc_refit": 0.5947
+}

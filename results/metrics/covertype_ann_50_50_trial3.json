@@ -1,0 +1,25 @@
+{
+ "dataset": "covertype",
+ "model": "ann",
+ "partition": "50_50",
+ "trial": 3,
+ "best_params": {
+  "net__module__hidden": [
+   128,
+   128
+  ],
+  "net__optimizer__momentum": 0.9
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.7792,
+ "acc_refit_diff": 0.0041599999999999415,
+ "refit_time_s": 2.927843127399683,
+ "score_time_s": 0.19777140021324158,
+ "roc_auc": 0.8611245165833034,
+ "apr": 0.8433239794895471,
+ "bep": 0.7778871391076115,
+ "lift": 1.7971630186751624,
+ "rms": 0.38941000111708185,
+ "mxe": 0.47099160096869774,
+ "acc_refit": 0.78336
+}

@@ -1,0 +1,22 @@
+{
+ "dataset": "letter",
+ "model": "knn",
+ "partition": "50_50",
+ "trial": 3,
+ "best_params": {
+  "knn__n_neighbors": 1,
+  "knn__weights": "uniform"
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.96416,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.002641327679157257,
+ "score_time_s": 0.0376402847468853,
+ "roc_auc": 0.9641645120910198,
+ "apr": 0.9483574330581219,
+ "bep": 0.9634223918575063,
+ "lift": 1.9204618760446088,
+ "rms": 0.1893145530591877,
+ "mxe": 1.2378836909727824,
+ "acc_refit": 0.96416
+}

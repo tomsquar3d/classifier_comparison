@@ -5,6 +5,11 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-26 — Session 6 (cont. 8)
+**Files changed:** `src/aggregate.py`, new `src/make_workbook.py`, `results/metrics/` (216), `results/scores/` (216), `results/summary/`, `figures/`, `.gitignore`, `docs/02`, `07`
+
+- Rescore run on DSMLP: 216/216 (closes `07` #36). `aggregate.py` now ranks all 8 paper metrics + precision / recall / balanced accuracy + 3 time metrics; all-metric Friedman test and paper-style bootstrap over cells × metrics (fig7 now this; accuracy-only version is fig7b); new fig9 rank-by-metric table. `make_workbook.py` builds `results/summary/classifier_metrics.xlsx` (also imported into Tom's Sheet, replacing its earlier tabs). `02` §6 added. `.gitignore`: score `.npz` files tracked.
+
 ## 2026-11-26 — Session 6 (cont. 7)
 **Files changed:** new `src/rescore.py`, `docs/01`, `05`, `07`
 

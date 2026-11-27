@@ -187,3 +187,26 @@ Figures: `fig7_bootstrap_ranks`, `fig8_critical_difference`.
 TabPFN is the most accurate but ~2,000× slower to predict than RF/XGBoost (it re-reads the training set at prediction time). RF/XGBoost give near-top accuracy at the lowest prediction cost. Source `results/summary/speed_table.csv`; figure `fig5_accuracy_vs_speed`.
 
 Figures (all PNG + PDF in `figures/`): fig1 accuracy vs training share (± 1 std bands), fig2 rank table, fig3 SVM C × gamma heatmaps, fig4 KNN curves, fig5 accuracy vs speed, fig6 Adult confusion matrices, fig7 bootstrap ranks, fig8 critical difference.
+
+## 6. All of the paper's metrics, plus time (added 2026-11-26)
+
+Accuracy, F-score, precision, recall and balanced accuracy come from the sweep's test predictions. ROC area, average precision (APR), break-even point (BEP), lift at 25%, RMS error and cross-entropy (MXE) come from `src/rescore.py` (each job refit with its stored best params on the same split; 216/216 rescored; refit accuracy identical to the sweep for RF, XGBoost, SVM, KNN, TabPFN; MLP mean +0.002, range −0.009 to +0.028). SVM scores = decision values min-max scaled to [0,1] (`05` #25). Source: `results/summary/metric_ranks.csv`, `per_job_metrics.csv`; figure `fig9_metric_rank_table`.
+
+Mean rank over the 12 dataset × split cells (1 = best; errors and times: lower = better):
+
+| Model | ACC | FSC | LFT | ROC | APR | BEP | RMS | MXE | **Mean of 8** | Tune | Fit | Predict |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| TabPFN | 1.25 | 1.25 | 1.50 | 1.17 | 1.25 | 1.25 | 1.17 | 1.17 | **1.25** | 4.25 | 4.83 | 6.00 |
+| XGBoost | 2.67 | 2.50 | 2.38 | 2.58 | 2.50 | 2.58 | 2.08 | 2.17 | **2.43** | 2.92 | 2.83 | 2.75 |
+| Random forest | 3.00 | 3.17 | 2.33 | 2.75 | 2.75 | 3.08 | 3.00 | 2.92 | **2.88** | 4.75 | 4.58 | 1.00 |
+| SVM (RBF) | 3.58 | 3.67 | 4.25 | 3.92 | 3.75 | 3.67 | 6.00 | 5.50 | **4.29** | 2.42 | 2.17 | 2.25 |
+| MLP | 5.33 | 5.33 | 4.71 | 4.58 | 4.75 | 5.21 | 4.17 | 3.75 | **4.73** | 5.67 | 5.58 | 5.00 |
+| KNN | 5.17 | 5.08 | 5.83 | 6.00 | 6.00 | 5.21 | 4.58 | 5.50 | **5.42** | 1.00 | 1.00 | 4.00 |
+
+- **Over all 8 metrics:** TabPFN > XGBoost > RF > SVM > MLP > KNN. Friedman on each model's mean rank over the 8 metrics per cell: χ² = 49.96, p = 1.4e-09; Nemenyi CD = 2.18.
+- **Bootstrap over cells and metrics** (paper Table 4 format; `fig7_bootstrap_ranks`): TabPFN 1st 99.7%; XGBoost 2nd 91.2%; RF 3rd 91.1%; SVM 4th 77.5%; MLP 5th 73.9%; KNN 6th 95.2%. Accuracy-only version moved to `fig7b_bootstrap_ranks_accuracy`.
+- **SVM is last on RMS and 5th–6th on cross-entropy** but 4th on the threshold/rank metrics — the paper's finding that uncalibrated SVM outputs are poor probabilities (it fixed this with Platt scaling, which we did not do).
+- **MLP gains on the probability metrics** (MXE rank 3.75 vs ACC 5.33): its outputs are reasonable probabilities even where its accuracy trails.
+- **KNN is last on ROC/APR** (often K small → coarse scores) and has the worst cross-entropy in several cells.
+- **Time:** KNN fastest to tune and fit (fitting stores the data); RF fastest to predict; TabPFN slowest to predict; MLP slowest to tune.
+

@@ -1,0 +1,21 @@
+{
+ "dataset": "adult",
+ "model": "rf",
+ "partition": "80_20",
+ "trial": 2,
+ "best_params": {
+  "max_features": 12
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.856,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 1.8717153407633305,
+ "score_time_s": 0.5176306329667568,
+ "roc_auc": 0.9130808167467398,
+ "apr": 0.7983534548114886,
+ "bep": 0.7016129032258065,
+ "lift": 2.825806451612903,
+ "rms": 0.31326498717344653,
+ "mxe": 0.3136579244398975,
+ "acc_refit": 0.856
+}

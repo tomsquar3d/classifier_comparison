@@ -1,0 +1,19 @@
+{
+ "dataset": "higgs",
+ "model": "tabpfn",
+ "partition": "50_50",
+ "trial": 3,
+ "best_params": {},
+ "score_source": "predict_proba",
+ "acc_sweep": 0.72192,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 1.6338529344648123,
+ "score_time_s": 6.561852363869548,
+ "roc_auc": 0.801580656431757,
+ "apr": 0.8219209514945331,
+ "bep": 0.7374622356495468,
+ "lift": 1.6367775452495252,
+ "rms": 0.42590609589841516,
+ "mxe": 0.5371333012188708,
+ "acc_refit": 0.72192
+}

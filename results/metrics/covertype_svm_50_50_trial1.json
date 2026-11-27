@@ -1,0 +1,22 @@
+{
+ "dataset": "covertype",
+ "model": "svm",
+ "partition": "50_50",
+ "trial": 1,
+ "best_params": {
+  "svc__C": 10.0,
+  "svc__gamma": 0.05
+ },
+ "score_source": "svm decision values, min-max scaled to [0,1] on this test set",
+ "acc_sweep": 0.8008,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.07072528079152107,
+ "score_time_s": 0.005274008959531784,
+ "roc_auc": 0.8696310615427508,
+ "apr": 0.8462338967831355,
+ "bep": 0.794880210042665,
+ "lift": 1.8266429438582146,
+ "rms": 0.42449865754560845,
+ "mxe": 0.5464943686722564,
+ "acc_refit": 0.8008
+}

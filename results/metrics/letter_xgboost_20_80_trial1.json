@@ -1,0 +1,22 @@
+{
+ "dataset": "letter",
+ "model": "xgboost",
+ "partition": "20_80",
+ "trial": 1,
+ "best_params": {
+  "max_depth": 8,
+  "n_estimators": 512
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.9222,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.4275842718780041,
+ "score_time_s": 0.01268884539604187,
+ "roc_auc": 0.9777028373021428,
+ "apr": 0.9778390337081456,
+ "bep": 0.9224652087475149,
+ "lift": 1.9737574552683896,
+ "rms": 0.2414161181700975,
+ "mxe": 0.20330050847178813,
+ "acc_refit": 0.9222
+}

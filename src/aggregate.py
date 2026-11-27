@@ -18,12 +18,18 @@ Outputs
   figures/fig4_knn_curves.{png,pdf}                CV train/val acc vs K
   figures/fig5_accuracy_vs_speed.{png,pdf}         bonus: accuracy vs predict time
   figures/fig6_confusion_adult.{png,pdf}           confusion matrices, Adult 80/20
-  figures/fig7_bootstrap_ranks.{png,pdf}           paper-style P(rank) table
+  figures/fig7_bootstrap_ranks.{png,pdf}           paper-style P(rank) table over
+                                                   cells AND the 8 metrics
+  figures/fig7b_bootstrap_ranks_accuracy.{png,pdf} same, accuracy only
   figures/fig8_critical_difference.{png,pdf}       Friedman + Nemenyi CD diagram
   results/summary/significance.json   Friedman test, Nemenyi CD, mean ranks
   results/summary/bootstrap_ranks.csv P(model finishes 1st..6th), bootstrap
   results/summary/all_metrics.csv     one row per dataset x partition x model:
                                       every metric, rank in its cell, best params
+  results/summary/per_job_metrics.csv every job with every metric (the paper's 8 +
+                                      precision / recall / balanced acc + time)
+  results/summary/metric_ranks.csv    mean rank of each model on each metric
+  figures/fig9_metric_rank_table.{png,pdf}         paper-style ranks by metric
   results/summary/rankings.csv        one row per model: mean rank overall, by
                                       dataset and by partition, cells won,
                                       bootstrap rank probabilities
@@ -420,7 +426,9 @@ def bootstrap_ranks(df: pd.DataFrame, seed: int = C.BASE_SEED) -> pd.DataFrame:
     return probs
 
 
-def fig7_bootstrap(probs: pd.DataFrame) -> None:
+def fig7_bootstrap(probs: pd.DataFrame, name: str = "fig7_bootstrap_ranks",
+                   what: str = "mean test accuracy",
+                   over: str = "cells and trials") -> None:
     k = len(C.MODELS)
     vals = probs[[f"rank_{i + 1}" for i in range(k)]].values
     fig, ax = plt.subplots(figsize=(7.5, 2.6))
@@ -437,9 +445,9 @@ def fig7_bootstrap(probs: pd.DataFrame) -> None:
     ax.tick_params(length=0)
     for sp in ax.spines.values():
         sp.set_visible(False)
-    ax.set_title(f"How often each model ranks 1st–{k}th by mean test accuracy "
-                 f"({N_BOOT:,} bootstrap samples of cells and trials)", fontsize=9, pad=24)
-    save(fig, "fig7_bootstrap_ranks")
+    ax.set_title(f"How often each model ranks 1st–{k}th by {what} "
+                 f"({N_BOOT:,} bootstrap samples of {over})", fontsize=9, pad=24)
+    save(fig, name)
 
 
 def fig8_cd(sig: dict) -> None:
@@ -493,6 +501,151 @@ def fig8_cd(sig: dict) -> None:
     save(fig, "fig8_critical_difference")
 
 
+# ---------------------------------------------------------------- all metrics
+# The paper's 8 performance metrics (section 2.2) + our 3 time metrics.
+# higher_is_better=False for errors and times.
+PAPER_METRICS = {"ACC": True, "FSC": True, "LFT": True, "ROC": True,
+                 "APR": True, "BEP": True, "RMS": False, "MXE": False}
+EXTRA_METRICS = {"PREC": True, "REC": True, "BAL_ACC": True}
+TIME_METRICS = {"TUNE_S": False, "FIT_S": False, "PREDICT_MS_1K": False}
+METRIC_LABELS = {"ACC": "Accuracy", "FSC": "F-score", "LFT": "Lift (25%)",
+                 "ROC": "ROC area", "APR": "Avg. precision", "BEP": "Break-even",
+                 "RMS": "RMS error", "MXE": "Cross-entropy", "PREC": "Precision",
+                 "REC": "Recall", "BAL_ACC": "Balanced acc.", "TUNE_S": "Tune time",
+                 "FIT_S": "Fit time", "PREDICT_MS_1K": "Predict time"}
+METRICS_DIR = C.RESULTS_DIR / "metrics"
+
+
+def per_job_metrics(raw: list[dict]) -> pd.DataFrame | None:
+    """One row per job: threshold metrics from the sweep's confusion matrix,
+    probability metrics from rescore.py, times from the sweep."""
+    if not METRICS_DIR.exists():
+        return None
+    rows = []
+    for r in raw:
+        name = f"{r['dataset']}_{r['model']}_{r['partition']}_trial{r['trial']}"
+        mp = METRICS_DIR / f"{name}.json"
+        if not mp.exists():
+            continue
+        pm = json.loads(mp.read_text())
+        (tn, fp), (fn, tp) = r["confusion_matrix"]["rows_true_cols_pred"]
+        prec = tp / (tp + fp) if tp + fp else 0.0
+        rec = tp / (tp + fn) if tp + fn else 0.0
+        rows.append({
+            "dataset": r["dataset"], "model": r["model"], "partition": r["partition"],
+            "trial": r["trial"],
+            "ACC": r["test_acc"],
+            "FSC": 2 * prec * rec / (prec + rec) if prec + rec else 0.0,
+            "LFT": pm["lift"], "ROC": pm["roc_auc"], "APR": pm["apr"], "BEP": pm["bep"],
+            "RMS": pm["rms"], "MXE": pm["mxe"],
+            "PREC": prec, "REC": rec,
+            "BAL_ACC": 0.5 * (rec + (tn / (tn + fp) if tn + fp else 0.0)),
+            "TUNE_S": r["tune_time_s"], "FIT_S": r["fit_time_s"],
+            "PREDICT_MS_1K": r["predict_ms_per_1k"],
+            "acc_refit_diff": pm["acc_refit_diff"]})
+    if not rows:
+        return None
+    m = order(pd.DataFrame(rows))
+    m.sort_values(["dataset", "partition", "model", "trial"]).to_csv(
+        SUMMARY_DIR / "per_job_metrics.csv", index=False, float_format="%.5f")
+    return m
+
+
+def metric_cell_ranks(m: pd.DataFrame) -> pd.DataFrame:
+    """Rank of each model in each dataset x partition cell, per metric, on
+    the mean over trials (1 = best; errors and times: lower is better)."""
+    cells = m.groupby(["dataset", "partition", "model"], observed=True).mean(
+        numeric_only=True).reset_index()
+    out = cells[["dataset", "partition", "model"]].copy()
+    for k, higher in {**PAPER_METRICS, **EXTRA_METRICS, **TIME_METRICS}.items():
+        out[k] = cells.groupby(["dataset", "partition"], observed=True)[k].rank(
+            ascending=not higher, method="average")
+    return out
+
+
+def metric_rank_table(cr: pd.DataFrame) -> pd.DataFrame:
+    t = cr.groupby("model", observed=True).mean(numeric_only=True).reindex(C.MODELS)
+    t["MEAN_8"] = t[list(PAPER_METRICS)].mean(axis=1)
+    t = t.sort_values("MEAN_8")
+    t.to_csv(SUMMARY_DIR / "metric_ranks.csv", float_format="%.3f")
+    return t
+
+
+def significance_all(cr: pd.DataFrame) -> dict:
+    """Friedman + Nemenyi on each model's mean rank over the 8 paper metrics
+    within each cell (12 blocks)."""
+    from scipy.stats import friedmanchisquare
+    cr = cr.copy()
+    cr["mean8"] = cr[list(PAPER_METRICS)].mean(axis=1)
+    wide = cr.pivot_table(index=["dataset", "partition"], columns="model",
+                          values="mean8", observed=True)[C.MODELS]
+    ranks = wide.rank(axis=1)          # already ranks: lower = better
+    n, k = wide.shape
+    stat, pval = friedmanchisquare(*[wide[c].values for c in C.MODELS])
+    cd = NEMENYI_Q05[k] * np.sqrt(k * (k + 1) / (6 * n))
+    out = {"n_blocks": int(n), "n_models": int(k),
+           "blocks": "dataset x partition cells; value = model's mean rank over "
+                     "the paper's 8 metrics in that cell",
+           "friedman_chi2": float(stat), "friedman_p": float(pval),
+           "nemenyi_cd_alpha_0.05": float(cd),
+           "mean_rank": ranks.mean().round(4).to_dict()}
+    (SUMMARY_DIR / "significance_all_metrics.json").write_text(json.dumps(out, indent=1))
+    return out
+
+
+def bootstrap_all(cr: pd.DataFrame, seed: int = C.BASE_SEED) -> pd.DataFrame:
+    """Paper Table 4 style: each round draws the 12 cells and the 8 metrics
+    with replacement, averages each model's rank over the drawn
+    (cell, metric) pairs, and ranks the models on that average."""
+    rng = np.random.default_rng(seed)
+    mets = list(PAPER_METRICS)
+    cube = np.stack([cr.pivot_table(index=["dataset", "partition"], columns="model",
+                                    values=k, observed=True)[C.MODELS].values
+                     for k in mets], axis=0)          # metric x cell x model
+    n_m, n_c, k = cube.shape
+    counts = np.zeros((k, k))
+    for _ in range(N_BOOT):
+        mi = rng.integers(n_m, size=n_m)
+        ci = rng.integers(n_c, size=n_c)
+        mean = cube[np.ix_(mi, ci)].reshape(-1, k).mean(axis=0)
+        noise = rng.random(k) * 1e-9               # break exact ties at random
+        for place, j in enumerate(np.argsort(mean + noise)):
+            counts[j, place] += 1
+    probs = pd.DataFrame(counts / N_BOOT, index=C.MODELS,
+                         columns=[f"rank_{i + 1}" for i in range(k)])
+    probs["expected_rank"] = (probs.values * np.arange(1, k + 1)).sum(axis=1)
+    probs = probs.sort_values("expected_rank")
+    probs.to_csv(SUMMARY_DIR / "bootstrap_ranks_all_metrics.csv", float_format="%.3f")
+    return probs
+
+
+def fig9_metric_ranks(t: pd.DataFrame) -> None:
+    cols = list(PAPER_METRICS) + ["MEAN_8"] + list(TIME_METRICS)
+    labels = [METRIC_LABELS.get(c, "Mean of 8") for c in cols]
+    vals = t[cols].values
+    k = len(C.MODELS)
+    fig, ax = plt.subplots(figsize=(11, 2.9))
+    shade = (k + 1 - vals) / k
+    ax.imshow(shade, cmap=SEQ_CMAP, vmin=0, vmax=1.25, aspect="auto")
+    for i in range(vals.shape[0]):
+        for j in range(vals.shape[1]):
+            ax.text(j, i, f"{vals[i, j]:.2f}", ha="center", va="center", fontsize=8,
+                    color="white" if shade[i, j] > 0.6 else TEXT,
+                    fontweight="bold" if cols[j] == "MEAN_8" else "normal")
+    for x in (len(PAPER_METRICS) - 0.5, len(PAPER_METRICS) + 0.5):
+        ax.axvline(x, color="white", lw=4)
+    ax.set_xticks(range(len(cols)), labels, fontsize=8, rotation=20, ha="right")
+    ax.set_yticks(range(k), [MODEL_LABELS[mm] for mm in t.index])
+    ax.grid(False)
+    ax.tick_params(length=0)
+    for sp in ax.spines.values():
+        sp.set_visible(False)
+    ax.set_title("Mean rank per metric over 12 dataset × split cells (1 = best; "
+                 "darker = better). Paper's 8 metrics | their mean | time",
+                 fontsize=9.5, pad=10)
+    save(fig, "fig9_metric_rank_table")
+
+
 # ---------------------------------------------------------------- export
 def export_tables(df: pd.DataFrame, raw: list[dict]) -> None:
     """Readable all-metrics and rankings tables (display names, one CSV each)."""
@@ -511,6 +664,15 @@ def export_tables(df: pd.DataFrame, raw: list[dict]) -> None:
     for i in range(int(df.trial.max())):
         bp[f"best_params_trial{i + 1}"] = bp.best_params.str[i]
     t = t.merge(bp.drop(columns="best_params"), on=["dataset", "partition", "model"])
+    pj = SUMMARY_DIR / "per_job_metrics.csv"
+    if pj.exists():   # add the paper's other metrics (cell means over trials)
+        extra = [k for k in list(PAPER_METRICS) + list(EXTRA_METRICS) if k != "ACC"]
+        mm = (pd.read_csv(pj).groupby(["dataset", "partition", "model"])[extra]
+              .mean().reset_index())
+        t = t.merge(order(mm), on=["dataset", "partition", "model"], how="left")
+        cols = list(t.columns)
+        bp_cols = [c for c in cols if c.startswith("best_params")]
+        t = t[[c for c in cols if c not in bp_cols] + bp_cols]
     t = t.sort_values(["dataset", "partition", "rank"])
     out = t.copy()
     out["dataset"] = out.dataset.map(lambda d: DATASET_LABELS[d].split(" (")[0])
@@ -535,6 +697,12 @@ def export_tables(df: pd.DataFrame, raw: list[dict]) -> None:
         bs = pd.read_csv(bs_path, index_col=0)
         for c in bs.columns:
             rk[f"bootstrap_P_{c}" if c != "expected_rank" else "bootstrap_expected_rank"] = bs[c]
+    mr_path = SUMMARY_DIR / "metric_ranks.csv"
+    if mr_path.exists():
+        mrk = pd.read_csv(mr_path, index_col=0)
+        rk["mean_rank_all8_metrics"] = mrk["MEAN_8"]
+        for k in list(PAPER_METRICS) + list(EXTRA_METRICS) + list(TIME_METRICS):
+            rk[f"mean_rank_metric_{k}"] = mrk[k]
     rk = rk.sort_values("mean_rank")
     rk.index = rk.index.map(MODEL_LABELS)
     rk.index.name = "model"
@@ -574,8 +742,21 @@ def main() -> None:
               f"Nemenyi CD {sig['nemenyi_cd_alpha_0.05']:.2f}")
         probs = bootstrap_ranks(df)
         print(probs.round(3).to_string())
-        fig7_bootstrap(probs)
+        fig7_bootstrap(probs, "fig7b_bootstrap_ranks_accuracy")
         fig8_cd(sig)
+    m = per_job_metrics(raw)
+    if m is not None:
+        print(f"  {len(m)} jobs with all metrics -> results/summary/per_job_metrics.csv")
+        cr = metric_cell_ranks(m)
+        mt = metric_rank_table(cr)
+        print(mt.round(2).to_string())
+        sa = significance_all(cr)
+        print(f"  all-metric Friedman chi2 {sa['friedman_chi2']:.2f}, p {sa['friedman_p']:.2e}")
+        pa = bootstrap_all(cr)
+        print(pa.round(3).to_string())
+        fig7_bootstrap(pa, "fig7_bootstrap_ranks", "mean rank over the paper's 8 metrics",
+                       "cells and metrics")
+        fig9_metric_ranks(mt)
     export_tables(df, raw)
 
 

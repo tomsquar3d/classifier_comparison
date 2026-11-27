@@ -1,0 +1,19 @@
+{
+ "dataset": "letter",
+ "model": "tabpfn",
+ "partition": "80_20",
+ "trial": 3,
+ "best_params": {},
+ "score_source": "predict_proba",
+ "acc_sweep": 0.9864,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 1.2151374816894531,
+ "score_time_s": 5.104166487231851,
+ "roc_auc": 0.9991532453169282,
+ "apr": 0.9991868136680451,
+ "bep": 0.9864864864864865,
+ "lift": 1.987281399046105,
+ "rms": 0.10824404818917442,
+ "mxe": 0.04135918102405193,
+ "acc_refit": 0.9864
+}

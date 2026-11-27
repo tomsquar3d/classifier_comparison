@@ -1,0 +1,19 @@
+{
+ "dataset": "adult",
+ "model": "tabpfn",
+ "partition": "50_50",
+ "trial": 3,
+ "best_params": {},
+ "score_source": "predict_proba",
+ "acc_sweep": 0.85728,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 5.405271975323558,
+ "score_time_s": 12.777549287304282,
+ "roc_auc": 0.9167223874046275,
+ "apr": 0.8071827169105205,
+ "bep": 0.6998063266623629,
+ "lift": 2.818203309888086,
+ "rms": 0.31183449655568807,
+ "mxe": 0.30263472896837995,
+ "acc_refit": 0.85728
+}

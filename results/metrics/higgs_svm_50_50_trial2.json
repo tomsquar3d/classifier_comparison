@@ -1,0 +1,22 @@
+{
+ "dataset": "higgs",
+ "model": "svm",
+ "partition": "50_50",
+ "trial": 2,
+ "best_params": {
+  "svc__C": 10.0,
+  "svc__gamma": 0.01
+ },
+ "score_source": "svm decision values, min-max scaled to [0,1] on this test set",
+ "acc_sweep": 0.668,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.07985837571322918,
+ "score_time_s": 0.006193468347191811,
+ "roc_auc": 0.7212098464763548,
+ "apr": 0.7215362711443762,
+ "bep": 0.6845921450151058,
+ "lift": 1.4518241003284194,
+ "rms": 0.4856601128503831,
+ "mxe": 0.6630290406017605,
+ "acc_refit": 0.668
+}

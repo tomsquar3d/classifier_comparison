@@ -1,0 +1,24 @@
+{
+ "dataset": "higgs",
+ "model": "ann",
+ "partition": "50_50",
+ "trial": 2,
+ "best_params": {
+  "net__module__hidden": [
+   32
+  ],
+  "net__optimizer__momentum": 0.9
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.66832,
+ "acc_refit_diff": 0.008639999999999981,
+ "refit_time_s": 3.045298356562853,
+ "score_time_s": 0.09302601590752602,
+ "roc_auc": 0.7309138972809668,
+ "apr": 0.7360071126961483,
+ "bep": 0.6921450151057402,
+ "lift": 1.479627559368847,
+ "rms": 0.458855206124324,
+ "mxe": 0.6128747876623,
+ "acc_refit": 0.67696
+}

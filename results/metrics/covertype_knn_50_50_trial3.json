@@ -1,0 +1,22 @@
+{
+ "dataset": "covertype",
+ "model": "knn",
+ "partition": "50_50",
+ "trial": 3,
+ "best_params": {
+  "knn__n_neighbors": 9,
+  "knn__weights": "distance"
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.78928,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.0038429051637649536,
+ "score_time_s": 0.059328263625502586,
+ "roc_auc": 0.8666927228061202,
+ "apr": 0.8477572207630053,
+ "bep": 0.7844488188976378,
+ "lift": 1.819479871354109,
+ "rms": 0.38538338883589035,
+ "mxe": 0.8197259920249274,
+ "acc_refit": 0.78928
+}

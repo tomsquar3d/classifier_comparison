@@ -1,0 +1,22 @@
+{
+ "dataset": "adult",
+ "model": "knn",
+ "partition": "20_80",
+ "trial": 3,
+ "best_params": {
+  "knn__n_neighbors": 45,
+  "knn__weights": "uniform"
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.8287,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.0028075799345970154,
+ "score_time_s": 0.0824314747005701,
+ "roc_auc": 0.8697137575889846,
+ "apr": 0.6818631849915943,
+ "bep": 0.6440677966101694,
+ "lift": 2.589184826472962,
+ "rms": 0.34898130410852085,
+ "mxe": 0.3967087947557938,
+ "acc_refit": 0.8287
+}

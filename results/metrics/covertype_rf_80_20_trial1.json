@@ -1,0 +1,21 @@
+{
+ "dataset": "covertype",
+ "model": "rf",
+ "partition": "80_20",
+ "trial": 1,
+ "best_params": {
+  "max_features": 20
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.844,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 2.266763823106885,
+ "score_time_s": 0.8560874350368977,
+ "roc_auc": 0.9195249045973236,
+ "apr": 0.9063229740358504,
+ "bep": 0.8326497128794094,
+ "lift": 1.91960623461854,
+ "rms": 0.34019111477674374,
+ "mxe": 0.37241791458812956,
+ "acc_refit": 0.844
+}

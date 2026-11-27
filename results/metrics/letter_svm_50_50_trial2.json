@@ -1,0 +1,22 @@
+{
+ "dataset": "letter",
+ "model": "svm",
+ "partition": "50_50",
+ "trial": 2,
+ "best_params": {
+  "svc__C": 10.0,
+  "svc__gamma": 0.5
+ },
+ "score_source": "svm decision values, min-max scaled to [0,1] on this test set",
+ "acc_sweep": 0.97072,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.05630064383149147,
+ "score_time_s": 0.005394944921135902,
+ "roc_auc": 0.9934199423589571,
+ "apr": 0.9941148585164571,
+ "bep": 0.9697837150127226,
+ "lift": 1.9866408141190421,
+ "rms": 0.33479504072563143,
+ "mxe": 0.4000195981910557,
+ "acc_refit": 0.97072
+}

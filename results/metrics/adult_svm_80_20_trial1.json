@@ -1,0 +1,22 @@
+{
+ "dataset": "adult",
+ "model": "svm",
+ "partition": "80_20",
+ "trial": 1,
+ "best_params": {
+  "svc__C": 10.0,
+  "svc__gamma": 0.001
+ },
+ "score_source": "svm decision values, min-max scaled to [0,1] on this test set",
+ "acc_sweep": 0.8556,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.04717385582625866,
+ "score_time_s": 0.0036312397569417953,
+ "roc_auc": 0.9069959677419354,
+ "apr": 0.7855023633982069,
+ "bep": 0.7032258064516129,
+ "lift": 2.825806451612903,
+ "rms": 0.40145267685748504,
+ "mxe": 0.47544138348567366,
+ "acc_refit": 0.8556
+}

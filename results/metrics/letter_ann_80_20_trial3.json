@@ -1,0 +1,26 @@
+{
+ "dataset": "letter",
+ "model": "ann",
+ "partition": "80_20",
+ "trial": 3,
+ "best_params": {
+  "net__module__hidden": [
+   128,
+   128,
+   128
+  ],
+  "net__optimizer__momentum": 0.9
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.9572,
+ "acc_refit_diff": -0.0032000000000000917,
+ "refit_time_s": 4.93952177092433,
+ "score_time_s": 0.016202030703425407,
+ "roc_auc": 0.9911106758932847,
+ "apr": 0.991655749050747,
+ "bep": 0.9546899841017488,
+ "lift": 1.987281399046105,
+ "rms": 0.18956071232039862,
+ "mxe": 0.1263986525565849,
+ "acc_refit": 0.954
+}

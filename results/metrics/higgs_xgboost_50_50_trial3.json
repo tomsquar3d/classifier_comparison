@@ -1,0 +1,22 @@
+{
+ "dataset": "higgs",
+ "model": "xgboost",
+ "partition": "50_50",
+ "trial": 3,
+ "best_params": {
+  "max_depth": 4,
+  "n_estimators": 128
+ },
+ "score_source": "predict_proba",
+ "acc_sweep": 0.70272,
+ "acc_refit_diff": 0.0,
+ "refit_time_s": 0.12585098296403885,
+ "score_time_s": 0.006595376878976822,
+ "roc_auc": 0.7769106706126561,
+ "apr": 0.7988966742124063,
+ "bep": 0.7190332326283988,
+ "lift": 1.6041387020281537,
+ "rms": 0.4379487608931236,
+ "mxe": 0.5631062247689937,
+ "acc_refit": 0.70272
+}
