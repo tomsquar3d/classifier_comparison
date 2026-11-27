@@ -121,3 +121,8 @@ Result: ⛔ NOT YET RECORDED.
 Average over 3 trials; build the main results table, the speed table and the figures listed in `04_analysis_plan.md`.
 
 Code: ⛔ NOT YET RECORDED (not written).
+
+## Step 6: Rescore with the paper's other metrics — 🟠 [WRITTEN 2026-11-26 — tested on fake data, CPU mode]
+
+`src/rescore.py` reads each `results/<job>.json`, rebuilds the model with its `best_params`, refits on the same stored training split with the same seed (no tuning), and scores the test split. Writes `results/scores/<job>.npz` (true label + score per test row) and `results/metrics/<job>.json` (ROC area, average precision, break-even point, lift at 25%, RMS, cross-entropy, and `acc_refit` vs the sweep's accuracy as a check). SVM: decision values min-max scaled to [0,1] (`05` #25). Skips jobs already rescored; `--force` redoes them.
+

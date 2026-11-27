@@ -5,6 +5,11 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-26 — Session 6 (cont. 7)
+**Files changed:** new `src/rescore.py`, `docs/01`, `05`, `07`
+
+- Decision `05` #25: rank on the paper's full metric set plus time. New `src/rescore.py` (refit with stored best params, save test scores, compute ROC/APR/BEP/lift/RMS/MXE). Tested on fake data in CPU mode (5 models; refit accuracy matched the sweep exactly). Added `07` #36 to run it on DSMLP.
+
 ## 2026-11-26 — Session 6 (cont. 6)
 **Files changed:** `src/aggregate.py`, `results/summary/all_metrics.csv`, `results/summary/rankings.csv`
 

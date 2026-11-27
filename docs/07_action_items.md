@@ -4,6 +4,7 @@
 ## Open
 | # | Added | Item | Blocking? | Notes |
 |---|-------|------|-----------|-------|
+| 36 | 2026-11-26 | Run `python src/rescore.py` on DSMLP (~20–40 min), copy `results/metrics/` + `results/scores/` back; then add multi-metric + time rankings to `aggregate.py` and the Sheet | Yes — paper-style ranking | 05 #25 |
 | 20 | 2026-11-04 | Write report incl. Bonus Points section + AI-use disclosure | Yes — submission | Due 11:59pm PST, Fri Dec 11, 2026 |
 | 34 | 2026-11-26 | Decide on a scaling experiment for rubric item 1 (dataset size, 10 pts): larger Covertype/HIGGS samples for GPU models, reported separately from the main 12.5k study | No | 04 open question |
 

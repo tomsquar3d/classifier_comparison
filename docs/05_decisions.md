@@ -157,3 +157,9 @@ Entries are permanent. If a decision is reversed, add a new entry pointing back 
 **Rationale:** Tom asked for standard grids based on the paper.
 **Impact:** Closes `07` #15. Grids live in `src/config.py` (`GRIDS`, plus fixed settings `RF_*`, `XGB_*`, `ANN_*`); model setup in `src/models.py`.
 
+## 25. Rank on the paper's full metric set, plus time — 2026-11-26
+
+**Decision:** Add the paper's other metrics to the ranking, not accuracy alone. From the saved confusion matrices: F-score (plus precision, recall, balanced accuracy). From a rescore pass (`src/rescore.py`: refit each job with its stored best params on the same split, no tuning, save test scores): ROC area, average precision, break-even point, lift at 25%, RMS error, cross-entropy. Also rank models on tune, fit and predict time.
+**Rationale:** Tom expected the paper's multi-metric ranking (plus our time metric); the sweep only kept hard predictions. Rescoring avoids re-running the 6-hour grid search.
+**Impact:** SVM scores are decision values min-max scaled to [0,1] per test set (paper's uncalibrated SVM), so its RMS / cross-entropy depend on that scaling — say so. Refit models are not bit-for-bit the sweep's models on GPU; `acc_refit_diff` records the gap.
+
