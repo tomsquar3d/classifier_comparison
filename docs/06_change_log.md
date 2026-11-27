@@ -5,6 +5,11 @@ Append-only. Newest first. Never edit past entries — append corrections.
 
 ---
 
+## 2026-11-26 — Session 6 (cont. 5)
+**Files changed:** `results/*_trial{2,3}.json` (144), `results/summary/`, `figures/`, `src/aggregate.py`, `docs/02`, `07`
+
+- Trials 2–3 finished (216/216; trial-1 files byte-identical to the committed ones). `aggregate.py` gains Friedman + Nemenyi critical difference and paper-style bootstrap rank probabilities (fig7, fig8). `02` §3–5 rewritten with 3-trial results; interim trial-1 section superseded.
+
 ## 2026-11-26 — Session 6 (cont. 4)
 **Files changed:** new `src/aggregate.py`, `results/*_trial1.json` (72), `results/summary/`, `figures/`, `docs/02`, `07`
 

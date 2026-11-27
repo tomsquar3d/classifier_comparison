@@ -1,0 +1,16 @@
+{
+ "n_blocks": 12,
+ "n_models": 6,
+ "blocks": "dataset x partition cells, mean test accuracy over trials",
+ "friedman_chi2": 41.66666666666663,
+ "friedman_p": 6.879847707143914e-08,
+ "nemenyi_cd_alpha_0.05": 2.176723455104024,
+ "mean_rank": {
+  "rf": 3.0,
+  "xgboost": 2.6667,
+  "svm": 3.5833,
+  "ann": 5.3333,
+  "knn": 5.1667,
+  "tabpfn": 1.25
+ }
+}

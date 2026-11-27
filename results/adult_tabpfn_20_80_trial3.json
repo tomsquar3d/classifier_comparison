@@ -1,0 +1,115 @@
+{
+ "dataset": "adult",
+ "model": "tabpfn",
+ "partition": "20_80",
+ "trial": 3,
+ "train_frac": 0.2,
+ "n_train": 2500,
+ "n_test": 10000,
+ "n_features": 104,
+ "train_positive_rate": 0.248,
+ "test_positive_rate": 0.2478,
+ "test_majority_baseline": 0.7522,
+ "cv_folds": 5,
+ "n_settings": 1,
+ "smoke": false,
+ "device": "gpu",
+ "seed": 118002,
+ "best_params": {},
+ "train_acc": 0.8868,
+ "val_acc": 0.8564,
+ "val_acc_std": 0.010836973747315263,
+ "cv_train_acc": 0.8873,
+ "test_acc": 0.8532,
+ "confusion_matrix": {
+  "labels": [
+   0,
+   1
+  ],
+  "rows_true_cols_pred": [
+   [
+    6982,
+    540
+   ],
+   [
+    928,
+    1550
+   ]
+  ]
+ },
+ "tune_time_s": 53.470665756613016,
+ "fit_time_s": 2.9705538749694824,
+ "predict_rows": 2500,
+ "predict_times_s": [
+  4.910075521096587,
+  4.66917067207396,
+  5.328449858352542,
+  5.495138065889478,
+  4.785445956513286
+ ],
+ "predict_median_s": 4.910075521096587,
+ "predict_ms_per_1k": 1964.0302084386346,
+ "predict_rows_per_s": 509.15713806407297,
+ "cv_results": {
+  "params": [
+   {}
+  ],
+  "mean_train_score": [
+   0.8873
+  ],
+  "std_train_score": [
+   0.005573149917237111
+  ],
+  "mean_test_score": [
+   0.8564
+  ],
+  "std_test_score": [
+   0.010836973747315263
+  ],
+  "rank_test_score": [
+   1
+  ],
+  "mean_fit_time": [
+   2.088741827011108
+  ],
+  "mean_score_time": [
+   3.7043821811676025
+  ],
+  "split0_test_score": [
+   0.85
+  ],
+  "split1_test_score": [
+   0.854
+  ],
+  "split2_test_score": [
+   0.858
+  ],
+  "split3_test_score": [
+   0.844
+  ],
+  "split4_test_score": [
+   0.876
+  ]
+ },
+ "gpu_at_start": {
+  "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+  "index": "0",
+  "memory_free_mib": "[Insufficient Permissions]",
+  "memory_total_mib": "[Insufficient Permissions]",
+  "utilization_pct": "[N/A]",
+  "driver": "580.126.20"
+ },
+ "versions": {
+  "python": "3.11.18",
+  "numpy": "2.4.6",
+  "sklearn": "1.9.1",
+  "cuml": "26.06.00",
+  "xgboost": "3.2.0",
+  "torch": "2.14.1+cu130",
+  "skorch": "1.4.0",
+  "tabpfn": "10.0.0"
+ },
+ "host": "tot013-607132",
+ "started": "2026-11-26T14:46:16-08:00",
+ "job_wall_time_s": 100.11982403509319
+}

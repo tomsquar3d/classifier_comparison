@@ -18,6 +18,10 @@ Outputs
   figures/fig4_knn_curves.{png,pdf}                CV train/val acc vs K
   figures/fig5_accuracy_vs_speed.{png,pdf}         bonus: accuracy vs predict time
   figures/fig6_confusion_adult.{png,pdf}           confusion matrices, Adult 80/20
+  figures/fig7_bootstrap_ranks.{png,pdf}           paper-style P(rank) table
+  figures/fig8_critical_difference.{png,pdf}       Friedman + Nemenyi CD diagram
+  results/summary/significance.json   Friedman test, Nemenyi CD, mean ranks
+  results/summary/bootstrap_ranks.csv P(model finishes 1st..6th), bootstrap
 
 Usage:
     python src/aggregate.py
@@ -357,6 +361,133 @@ def fig6_confusion(raw: list[dict], dataset: str = "adult") -> None:
     save(fig, f"fig6_confusion_{dataset}")
 
 
+# ---------------------------------------------------------------- significance
+# Nemenyi critical values q_0.05 (Demsar 2006, Table 5), by number of models k
+NEMENYI_Q05 = {2: 1.960, 3: 2.343, 4: 2.569, 5: 2.728, 6: 2.850, 7: 2.949,
+               8: 3.031, 9: 3.102, 10: 3.164}
+N_BOOT = 1000
+
+
+def significance(t: pd.DataFrame) -> dict:
+    """Friedman test over the dataset x partition cells (blocks), using each
+    model's mean test accuracy over the 3 trials, then the Nemenyi critical
+    difference for mean ranks (Demsar 2006)."""
+    from scipy.stats import friedmanchisquare
+    wide = t.pivot_table(index=["dataset", "partition"], columns="model",
+                         values="test_mean", observed=True)[C.MODELS].dropna()
+    ranks = wide.rank(axis=1, ascending=False)
+    n, k = wide.shape
+    stat, pval = friedmanchisquare(*[wide[m].values for m in C.MODELS])
+    cd = NEMENYI_Q05[k] * np.sqrt(k * (k + 1) / (6 * n))
+    out = {"n_blocks": int(n), "n_models": int(k),
+           "blocks": "dataset x partition cells, mean test accuracy over trials",
+           "friedman_chi2": float(stat), "friedman_p": float(pval),
+           "nemenyi_cd_alpha_0.05": float(cd),
+           "mean_rank": ranks.mean().round(4).to_dict()}
+    (SUMMARY_DIR / "significance.json").write_text(json.dumps(out, indent=1))
+    return out
+
+
+def bootstrap_ranks(df: pd.DataFrame, seed: int = C.BASE_SEED) -> pd.DataFrame:
+    """Paper-style rank probabilities (its Table 4 bootstraps over problems
+    and metrics). Each round: draw the 12 dataset x partition cells with
+    replacement, and for each drawn cell one of its 3 trials at random;
+    average each model's test accuracy over the drawn cells and rank the
+    models. Repeat N_BOOT times; report how often each model lands 1st..kth."""
+    rng = np.random.default_rng(seed)
+    acc = df.pivot_table(index=["dataset", "partition", "trial"], columns="model",
+                         values="test_acc", observed=True)[C.MODELS]
+    cells = acc.index.droplevel("trial").unique()
+    k = len(C.MODELS)
+    counts = np.zeros((k, k))
+    for _ in range(N_BOOT):
+        draw = cells[rng.integers(len(cells), size=len(cells))]
+        rows = [acc.loc[(d, p)].iloc[rng.integers(len(acc.loc[(d, p)]))] for d, p in draw]
+        mean = np.mean(np.vstack([r.values for r in rows]), axis=0)
+        order_ = np.argsort(-mean)
+        for place, mi in enumerate(order_):
+            counts[mi, place] += 1
+    probs = pd.DataFrame(counts / N_BOOT, index=C.MODELS,
+                         columns=[f"rank_{i + 1}" for i in range(k)])
+    probs["expected_rank"] = (probs.values * np.arange(1, k + 1)).sum(axis=1)
+    probs = probs.sort_values("expected_rank")
+    probs.to_csv(SUMMARY_DIR / "bootstrap_ranks.csv", float_format="%.3f")
+    return probs
+
+
+def fig7_bootstrap(probs: pd.DataFrame) -> None:
+    k = len(C.MODELS)
+    vals = probs[[f"rank_{i + 1}" for i in range(k)]].values
+    fig, ax = plt.subplots(figsize=(7.5, 2.6))
+    ax.imshow(vals, cmap=SEQ_CMAP, vmin=0, vmax=1, aspect="auto")
+    for i in range(k):
+        for j in range(k):
+            ax.text(j, i, f"{vals[i, j]:.3f}", ha="center", va="center", fontsize=8,
+                    color="white" if vals[i, j] > 0.55 else TEXT)
+    ords = ["1st", "2nd", "3rd"] + [f"{i}th" for i in range(4, k + 1)]
+    ax.set_xticks(range(k), ords)
+    ax.xaxis.tick_top()
+    ax.set_yticks(range(k), [MODEL_LABELS[m] for m in probs.index])
+    ax.grid(False)
+    ax.tick_params(length=0)
+    for sp in ax.spines.values():
+        sp.set_visible(False)
+    ax.set_title(f"How often each model ranks 1st–{k}th by mean test accuracy "
+                 f"({N_BOOT:,} bootstrap samples of cells and trials)", fontsize=9, pad=24)
+    save(fig, "fig7_bootstrap_ranks")
+
+
+def fig8_cd(sig: dict) -> None:
+    """Critical-difference diagram: models on a mean-rank axis; models joined
+    by a black bar are NOT significantly different (Nemenyi, alpha 0.05)."""
+    mr = pd.Series(sig["mean_rank"]).sort_values()
+    cd, k = sig["nemenyi_cd_alpha_0.05"], sig["n_models"]
+    rs = mr.values
+    cliques = []
+    for i in range(len(rs)):
+        j = i
+        while j + 1 < len(rs) and rs[j + 1] - rs[i] < cd:
+            j += 1
+        if j > i and not any(a_ <= i and j <= b_ for a_, b_ in cliques):
+            cliques.append((i, j))
+
+    y_axis, bar_gap, lab_gap = 1.0, 0.07, 0.13
+    y_bars0 = y_axis - 0.09
+    y_lab0 = y_bars0 - bar_gap * len(cliques) - 0.06
+    half = (len(mr) + 1) // 2
+    y_bottom = y_lab0 - lab_gap * (half - 1) - 0.08
+    fig, ax = plt.subplots(figsize=(7.5, 2.9))
+    ax.set_xlim(k + 0.35, 0.65)         # best (rank 1) on the right
+    ax.set_ylim(y_bottom, y_axis + 0.33)
+    ax.axis("off")
+    ax.plot([1, k], [y_axis, y_axis], color=TEXT2, lw=1)
+    for r in range(1, k + 1):
+        ax.plot([r, r], [y_axis, y_axis + 0.03], color=TEXT2, lw=1)
+        ax.text(r, y_axis + 0.05, str(r), ha="center", va="bottom", fontsize=8, color=TEXT2)
+    y_cd = y_axis + 0.2
+    ax.plot([k, k - cd], [y_cd, y_cd], color=TEXT, lw=1.5)
+    for x in (k, k - cd):
+        ax.plot([x, x], [y_cd - 0.02, y_cd + 0.02], color=TEXT, lw=1.5)
+    ax.text(k - cd - 0.08, y_cd, f"critical difference = {cd:.2f}", ha="left",
+            va="center", fontsize=8)
+    for n_, (a_, b_) in enumerate(cliques):
+        yb = y_bars0 - bar_gap * n_
+        ax.plot([rs[a_] - 0.04, rs[b_] + 0.04], [yb, yb], color=TEXT, lw=3,
+                solid_capstyle="round", zorder=3)
+    for i, (m, r) in enumerate(mr.items()):
+        right = i < half
+        y = y_lab0 - lab_gap * (i if right else len(mr) - 1 - i)
+        x_lab = 0.8 if right else k + 0.2
+        ax.plot([r, r, x_lab], [y_axis, y, y], color=MODEL_COLORS[m], lw=1.5, zorder=2)
+        ax.text(x_lab - 0.04 if right else x_lab + 0.04, y, f"{MODEL_LABELS[m]} ({r:.2f})",
+                ha="left" if right else "right", va="center", fontsize=8)
+    ax.set_title(f"Mean rank over {sig['n_blocks']} dataset × split cells "
+                 f"(Friedman p = {sig['friedman_p']:.1e}).\nModels joined by a "
+                 "black bar are not significantly different (Nemenyi, α = 0.05).",
+                 fontsize=9)
+    save(fig, "fig8_critical_difference")
+
+
 # ---------------------------------------------------------------- main
 def main() -> None:
     df, raw = load()
@@ -383,6 +514,14 @@ def main() -> None:
     fig4_knn(raw)
     fig5_speed(speed)
     fig6_confusion(raw, "adult")
+    if n_trials >= 2:
+        sig = significance(t)
+        print(f"  Friedman chi2 {sig['friedman_chi2']:.2f}, p {sig['friedman_p']:.2e}; "
+              f"Nemenyi CD {sig['nemenyi_cd_alpha_0.05']:.2f}")
+        probs = bootstrap_ranks(df)
+        print(probs.round(3).to_string())
+        fig7_bootstrap(probs)
+        fig8_cd(sig)
 
 
 if __name__ == "__main__":

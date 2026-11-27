@@ -1,0 +1,257 @@
+{
+ "dataset": "covertype",
+ "model": "ann",
+ "partition": "20_80",
+ "trial": 2,
+ "train_frac": 0.2,
+ "n_train": 2500,
+ "n_test": 10000,
+ "n_features": 54,
+ "train_positive_rate": 0.4876,
+ "test_positive_rate": 0.4876,
+ "test_majority_baseline": 0.5124,
+ "cv_folds": 5,
+ "n_settings": 8,
+ "smoke": false,
+ "device": "gpu",
+ "seed": 118001,
+ "best_params": {
+  "net__module__hidden": [
+   128
+  ],
+  "net__optimizer__momentum": 0.9
+ },
+ "train_acc": 0.804,
+ "val_acc": 0.7656000000000001,
+ "val_acc_std": 0.015969971822141715,
+ "cv_train_acc": 0.8039,
+ "test_acc": 0.7663,
+ "confusion_matrix": {
+  "labels": [
+   0,
+   1
+  ],
+  "rows_true_cols_pred": [
+   [
+    3875,
+    1249
+   ],
+   [
+    1088,
+    3788
+   ]
+  ]
+ },
+ "tune_time_s": 87.51699676178396,
+ "fit_time_s": 1.1954476833343506,
+ "predict_rows": 2500,
+ "predict_times_s": [
+  0.19998066127300262,
+  0.20739802718162537,
+  0.29573934338986874,
+  0.2035286333411932,
+  0.29340920597314835
+ ],
+ "predict_median_s": 0.20739802718162537,
+ "predict_ms_per_1k": 82.95921087265013,
+ "predict_rows_per_s": 12054.116589116185,
+ "cv_results": {
+  "params": [
+   {
+    "net__module__hidden": [
+     32
+    ],
+    "net__optimizer__momentum": 0.5
+   },
+   {
+    "net__module__hidden": [
+     32
+    ],
+    "net__optimizer__momentum": 0.9
+   },
+   {
+    "net__module__hidden": [
+     128
+    ],
+    "net__optimizer__momentum": 0.5
+   },
+   {
+    "net__module__hidden": [
+     128
+    ],
+    "net__optimizer__momentum": 0.9
+   },
+   {
+    "net__module__hidden": [
+     128,
+     128
+    ],
+    "net__optimizer__momentum": 0.5
+   },
+   {
+    "net__module__hidden": [
+     128,
+     128
+    ],
+    "net__optimizer__momentum": 0.9
+   },
+   {
+    "net__module__hidden": [
+     128,
+     128,
+     128
+    ],
+    "net__optimizer__momentum": 0.5
+   },
+   {
+    "net__module__hidden": [
+     128,
+     128,
+     128
+    ],
+    "net__optimizer__momentum": 0.9
+   }
+  ],
+  "mean_train_score": [
+   0.78,
+   0.7962,
+   0.7883,
+   0.8039,
+   0.7872,
+   0.8099999999999999,
+   0.7915,
+   0.817
+  ],
+  "std_train_score": [
+   0.019887181801351333,
+   0.018869552193944622,
+   0.012106196760337256,
+   0.01096540012949823,
+   0.017362603491412228,
+   0.018218122845123186,
+   0.017742604092973516,
+   0.0348209706929603
+  ],
+  "mean_test_score": [
+   0.7544000000000001,
+   0.7588000000000001,
+   0.7612,
+   0.7656000000000001,
+   0.7555999999999999,
+   0.7535999999999999,
+   0.7548,
+   0.756
+  ],
+  "std_test_score": [
+   0.021406541056415464,
+   0.014455448799674133,
+   0.01642437213411826,
+   0.015969971822141715,
+   0.011689311356961975,
+   0.006621178142898745,
+   0.019863534428696237,
+   0.022235107375499694
+  ],
+  "rank_test_score": [
+   7,
+   3,
+   2,
+   1,
+   5,
+   8,
+   6,
+   4
+  ],
+  "mean_fit_time": [
+   3.206425333023071,
+   1.3029071807861328,
+   2.43766303062439,
+   1.0790812492370605,
+   2.5188626766204836,
+   1.2237383842468261,
+   2.8518810272216797,
+   1.4574612617492675
+  ],
+  "mean_score_time": [
+   0.0373293399810791,
+   0.004826211929321289,
+   0.004860305786132812,
+   0.006721639633178711,
+   0.0049492835998535155,
+   0.04446539878845215,
+   0.07448158264160157,
+   0.004963064193725586
+  ],
+  "split0_test_score": [
+   0.76,
+   0.766,
+   0.754,
+   0.774,
+   0.77,
+   0.756,
+   0.738,
+   0.774
+  ],
+  "split1_test_score": [
+   0.774,
+   0.774,
+   0.772,
+   0.762,
+   0.762,
+   0.756,
+   0.772,
+   0.752
+  ],
+  "split2_test_score": [
+   0.77,
+   0.77,
+   0.782,
+   0.776,
+   0.76,
+   0.762,
+   0.76,
+   0.788
+  ],
+  "split3_test_score": [
+   0.714,
+   0.736,
+   0.734,
+   0.736,
+   0.736,
+   0.742,
+   0.726,
+   0.728
+  ],
+  "split4_test_score": [
+   0.754,
+   0.748,
+   0.764,
+   0.78,
+   0.75,
+   0.752,
+   0.778,
+   0.738
+  ]
+ },
+ "gpu_at_start": {
+  "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+  "index": "0",
+  "memory_free_mib": "[Insufficient Permissions]",
+  "memory_total_mib": "[Insufficient Permissions]",
+  "utilization_pct": "[N/A]",
+  "driver": "580.126.20"
+ },
+ "versions": {
+  "python": "3.11.18",
+  "numpy": "2.4.6",
+  "sklearn": "1.9.1",
+  "cuml": "26.06.00",
+  "xgboost": "3.2.0",
+  "torch": "2.14.1+cu130",
+  "skorch": "1.4.0",
+  "tabpfn": "10.0.0"
+ },
+ "host": "tot013-607132",
+ "started": "2026-11-26T13:49:11-08:00",
+ "job_wall_time_s": 91.47713509015739
+}
