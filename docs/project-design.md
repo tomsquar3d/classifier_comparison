@@ -66,6 +66,7 @@ Every dataset is a **12,500-row** stratified, fixed-seed subsample taken once, b
 - **Open (repo #34):** rubric item 1 gives 10 pts for "how challenging and large are the datasets". A separate, clearly labelled scaling run on larger Covertype/HIGGS samples could cover it without changing the main study.
 
 ## Change log
+- **2026-11-26 (results):** Full sweep done on DSMLP (216/216, one GPU type). Mean ranks: TabPFN 1.25, XGBoost 2.67, RF 3.00, SVM 3.58, KNN 5.17, MLP 5.33; Friedman p ≈ 7e-8, Nemenyi CD 2.18. Test accuracy rises with training share in 23/24 series. Details in repo `docs/02` §3–5; 8 figures in `figures/`. Next: report (NeurIPS LaTeX).
 - **2026-11-26 (code):** Grids approved. Experiment script (`src/run_job.py`) and resumable runner (`src/run_sweep.py`) written; tested on fake data in CPU mode. TabPFN gets 5-fold CV too, for a validation accuracy.
 - **2026-11-26 (rates, grids):** Balancing switched off; all datasets at natural class rates (decision #23). Grids proposed from the paper (#24). NeurIPS LaTeX template chosen.
 - **2026-11-26:** Every dataset capped at 12,500 rows; SVM cap dropped; TabPFN fits at 80/20 (decision #19). Tune in every trial, replacing trial-1-only tuning (#20). Adult left unbalanced, like the paper (#21). TA check-in dropped; TabPFN kept as the novelty (#22). Due date recorded.

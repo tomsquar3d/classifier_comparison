@@ -6,11 +6,11 @@
 |---|-------|------|-----------|-------|
 | 20 | 2026-11-04 | Write report incl. Bonus Points section + AI-use disclosure | Yes — submission | Due 11:59pm PST, Fri Dec 11, 2026 |
 | 34 | 2026-11-26 | Decide on a scaling experiment for rubric item 1 (dataset size, 10 pts): larger Covertype/HIGGS samples for GPU models, reported separately from the main 12.5k study | No | 04 open question |
-| 26 | 2026-11-24 | If sweep timings are too noisy or came from mixed GPU types, run a short timing-only pass on one GPU type | No | Decide after the sweep |
 
 ## Done
 | # | Added | Done | Item | Resolution |
 |---|-------|------|------|------------|
+| 26 | 2026-11-24 | 2026-11-26 | Timing-only re-pass if mixed GPUs | Not needed: all 216 jobs on one GPU type |
 | 16 | 2026-11-04 | 2026-11-26 | Run full 216-job sweep | 216/216 on DSMLP, one GPU type; results in git |
 | 17 | 2026-11-04 | 2026-11-26 | Aggregate results | `src/aggregate.py`; tables in 02 §3–5 |
 | 18 | 2026-11-04 | 2026-11-26 | Make figures | 8 figures incl. Friedman / critical-difference and bootstrap ranks |
